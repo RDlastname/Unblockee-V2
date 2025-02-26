@@ -1,1 +1,3 @@
-UnblockeeV2 uses Doge V4 Unblocker to cloak and play games and other apps. So far Unblockee only uses Doge v4 and Froggy's Arcade  at the moment, more are to come. Unblockee is really easy to use as you just have to click buttons to go to the Proxy.
+UnblockeeV2 uses Doge V4 and Froggys Arcade to cloak and play games. 
+-
+How to use? Just download the raw file and open it and click the buttons,make sure to cloak first in settings 
