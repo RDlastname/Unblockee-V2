@@ -21,6 +21,7 @@
 <P></P>
  <html>
 
+
  <!DOCTYPE html>
  <html lang="en">
  <head>
@@ -299,3 +300,118 @@
    </script>
  </body>
  </html>
+
+ <button id="panicButton" class="navigate-button" onclick="toggleCalculator()">Panic Button</button>
+<button id="faviconButton" class="navigate-button" onclick="changeFavicon()">Change Favicon</button>
+
+<div id="calculatorContainer"></div>
+
+<style>
+  #calculator {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    display: none;
+  }
+  #calculator input {
+    width: 100%;
+    font-size: 20px;
+    margin-bottom: 10px;
+    text-align: right;
+  }
+  #calculator button {
+    font-size: 18px;
+    padding: 10px;
+    margin: 5px;
+    width: 23%;
+  }
+  .navigate-button {
+    padding: 3px 6px;
+    font-size: 12px;
+  }
+</style>
+
+<script>
+  function toggleCalculator() {
+    let calculatorDiv = document.getElementById("calculator");
+    let panicButton = document.getElementById("panicButton");
+    
+    if (!calculatorDiv) {
+      calculatorDiv = document.createElement("div");
+      calculatorDiv.id = "calculator";
+      calculatorDiv.innerHTML = `
+        <input type="text" id="calcDisplay" disabled>
+        <br>
+        <button onclick="clearDisplay()">C</button>
+        <button onclick="addToDisplay('1')">1</button>
+        <button onclick="addToDisplay('2')">2</button>
+        <button onclick="addToDisplay('+')">+</button>
+        <br>
+        <button onclick="addToDisplay('3')">3</button>
+        <button onclick="addToDisplay('4')">4</button>
+        <button onclick="addToDisplay('5')">5</button>
+        <button onclick="addToDisplay('-')">-</button>
+        <br>
+        <button onclick="addToDisplay('6')">6</button>
+        <button onclick="addToDisplay('7')">7</button>
+        <button onclick="addToDisplay('8')">8</button>
+        <button onclick="addToDisplay('*')">*</button>
+        <br>
+        <button onclick="addToDisplay('9')">9</button>
+        <button onclick="addToDisplay('0')">0</button>
+        <button onclick="calculateResult()">=</button>
+        <button onclick="addToDisplay('/')">/button>
+        <br>
+      `;
+      document.getElementById("calculatorContainer").appendChild(calculatorDiv);
+    }
+    
+    if (calculatorDiv.style.display === "none" || calculatorDiv.style.display === "") {
+      calculatorDiv.style.display = "block";
+      panicButton.textContent = "Restore View";
+    } else {
+      calculatorDiv.style.display = "none";
+      panicButton.textContent = "Panic Button";
+    }
+  }
+  
+  function addToDisplay(value) {
+    document.getElementById("calcDisplay").value += value;
+  }
+  
+  function clearDisplay() {
+    document.getElementById("calcDisplay").value = "";
+  }
+  
+  function calculateResult() {
+    try {
+      document.getElementById("calcDisplay").value = eval(document.getElementById("calcDisplay").value);
+    } catch {
+      document.getElementById("calcDisplay").value = "Error";
+    }
+  }
+
+  function changeFavicon() {
+    let choice = prompt("Choose a favicon: Type 'classroom' for Google Classroom or 'google' for Google");
+    let faviconURL = "";
+    
+    if (choice === "classroom") {
+      faviconURL = "https://www.gstatic.com/classroom/favicon.png";
+    } else if (choice === "google") {
+      faviconURL = "https://www.google.com/favicon.ico";
+    } else {
+      alert("Invalid choice. Please type 'classroom' or 'google'.");
+      return;
+    }
+    
+    let favicon = document.querySelector("link[rel='icon']") || document.createElement("link");
+    favicon.rel = "icon";
+    favicon.href = faviconURL;
+    document.head.appendChild(favicon);
+  }
+</script>
