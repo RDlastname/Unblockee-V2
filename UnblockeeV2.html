@@ -4524,11 +4524,35 @@
  
  
  
- 
- console.log('Why are you looking here?');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
  
- <!DOCTYPE html>
+                                                   <!DOCTYPE html>
  <html lang="en">
  <head>
    <meta charset="UTF-8">
@@ -4565,7 +4589,7 @@
        align-items: center;
        justify-content: center;
        gap: 10px;
-       margin-top: 10px;
+            margin-top: 10px;
      }
      .template-container {
        margin-top: 10px;
@@ -4659,7 +4683,7 @@
      let numParticles = 100;
      let particleSize = 3;  // Default particle size
      let particleColor = "#ffffff";
-     let isDarkMode = true;
+                      let isDarkMode = true;
      let particleShape = 'circle';  // Default particle shape
  
      let activeTemplate = null;
@@ -4688,7 +4712,7 @@
          if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
        }
        draw() {
-         let drawColor = particleColor;
+                 let drawColor = particleColor;
          if (activeTemplate && templateColors[activeTemplate]) {
            const colors = templateColors[activeTemplate];
            drawColor = colors[Math.floor(Math.random() * colors.length)];
@@ -4717,8 +4741,8 @@
          ctx.fill();
        }
      }
- 
-     function initParticles() {
+       
+                                              function initParticles() {
        particles = [];
        for (let i = 0; i < numParticles; i++) {
          particles.push(new Particle());
@@ -4792,10 +4816,10 @@
      });
  
      initParticles();
-     animateParticles();
+                     animateParticles();
  
      function hideEverything() {
-       document.getElementById("mainContent").style.display = "none";
+                document.getElementById("mainContent").style.display = "none";
        document.getElementById("backContainer").style.display = "block";
      }
  
