@@ -301,7 +301,7 @@
  </body>
  </html>
 
- <button id="panicButton" class="navigate-button" onclick="toggleCalculator()">Panic Button</button>
+ <button id="panicButton" class="navigate-button" onclick="toggleCalculator()">Calculator Button</button>
 <button id="faviconButton" class="navigate-button" onclick="changeFavicon()">Change Favicon</button>
 
 <div id="calculatorContainer"></div>
@@ -365,7 +365,7 @@
         <button onclick="addToDisplay('9')">9</button>
         <button onclick="addToDisplay('0')">0</button>
         <button onclick="calculateResult()">=</button>
-        <button onclick="addToDisplay('/')">/button>
+        <button onclick="addToDisplay('/')">/</button>
         <br>
       `;
       document.getElementById("calculatorContainer").appendChild(calculatorDiv);
@@ -376,7 +376,7 @@
       panicButton.textContent = "Restore View";
     } else {
       calculatorDiv.style.display = "none";
-      panicButton.textContent = "Panic Button";
+      panicButton.textContent = "Calculator Button";
     }
   }
   
