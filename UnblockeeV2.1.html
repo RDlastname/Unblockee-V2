@@ -1,417 +1,475 @@
-<Title>Unblocker</Title>
-<h1>Unblocker Apps</h1><body></body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unblocker</title>
+  <style>
+    /* Global Styles */
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+      color: white;
+      text-align: center;
+      transition: background 0.3s, color 0.3s;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    /* Header and Button Styles */
+    .navigate-button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    .navigate-button-small {
+      padding: 3px 6px;
+      font-size: 12px;
+      margin: 5px;
+    }
+    /* Main Content Wrapper */
+    #mainContentWrapper {
+      /* Contains top header, particle animation, etc. */
+    }
+    /* Particle Content Styles */
+    .content {
+      position: relative;
+      z-index: 1;
+      margin-top: 50px;
+    }
+    .controls {
+      position: relative;
+      z-index: 1;
+      margin-top: 20px;
+    }
+    .color-mode-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .template-container {
+      margin-top: 10px;
+    }
+    .template-container button {
+      padding: 5px 10px;
+      font-size: 14px;
+      margin: 0 5px;
+      cursor: pointer;
+      border: none;
+      border-radius: 3px;
+      background-color: #555;
+      color: white;
+    }
+    .toggle-mode {
+      padding: 5px 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    /* Calculator Styles */
+    #calculator {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      display: none;
+      color: black;
+    }
+    #calculator input {
+      width: 100%;
+      font-size: 20px;
+      margin-bottom: 10px;
+      text-align: right;
+    }
+    #calculator button {
+      font-size: 18px;
+      padding: 10px;
+      margin: 5px;
+      width: 23%;
+    }
+    /* MISC Buttons Container */
+    #miscButtons {
+      display: none; /* Hidden by default */
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      z-index: 5;
+    }
+    /* Miscellaneous Toggle Button Style */
+    #miscToggleBtn {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 6;
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Main Content (Always Visible) -->
+  <div id="mainContentWrapper">
+    <!-- Top Header and Navigation Buttons -->
+    <h1>Unblocker Apps</h1>
+    <h1>Doge V4</h1>
+    <button style="background-color: rgb(0, 0, 255); color: white;" onclick="window.open('https://dogestforvpsig.vercel.app/apps','_blank')">Apps</button>
+    <button style="background-color: rgb(89, 89, 179); color: white;" onclick="window.open('https://dogestforvpsig.vercel.app/gms','_blank')">Games</button>
+    <button style="background-color: rgb(179, 89, 89); color: white;" onclick="window.open('https://dogestforvpsig.vercel.app/settings.html','_blank')">Settings</button>
+    <button style="background-color: rgb(0, 0, 255); color: white;" onclick="window.open('https://dogestforvpsig.vercel.app/','_blank')">Search</button>
 
-<h1>Doge V4</h1>
+    <!-- Main Particle Animation and Interactive Section -->
+    <div id="mainContent">
+      <canvas id="particleCanvas"></canvas>
+      <div class="content">
+        <h1 id="title">Original Title</h1>
+        <textarea id="titleInput" style="width: 300px; height: 100px;" placeholder="Type here to change the title..."></textarea>
+        <div class="controls">
+          <label for="particleSlider">Particles: </label>
+          <input type="range" id="particleSlider" min="10" max="500" value="100" />
+          <label for="sizeSlider">Size: </label>
+          <input type="range" id="sizeSlider" min="1" max="10" value="3" />
+          <div class="color-mode-container">
+            <label for="colorPicker">Color: </label>
+            <input type="color" id="colorPicker" value="#ffffff" />
+            <button id="toggleMode" class="toggle-mode">Light Mode</button>
+          </div>
+          <!-- Template Buttons -->
+          <div class="template-container">
+            <span>Templates:</span>
+            <button onclick="setTemplate('warm')">Warm</button>
+            <button onclick="setTemplate('cold')">Cold</button>
+            <button onclick="setTemplate('pastel')">Pastel</button>
+            <button onclick="setTemplate(null)">Default</button>
+          </div>
+          <!-- Particle Shape Buttons -->
+          <div class="template-container">
+            <span>Particle Shapes:</span>
+            <button onclick="setParticleShape('circle')">Circle</button>
+            <button onclick="setParticleShape('square')">Square</button>
+            <button onclick="setParticleShape('triangle')">Triangle</button>
+            <button onclick="setParticleShape('star')">Star</button>
+          </div>
+        </div>
+        <button class="navigate-button" onclick="hideEverything()">Hide Particles</button>
+      </div>
+    </div>
+    <!-- Back Container for Particle Section -->
+    <div id="backContainer" style="display: none; text-align: center; margin-top: 50px;">
+      <button id="backButton" class="navigate-button" onclick="showEverything()">Show Particles</button>
+    </div>
+  </div>
 
+  <!-- MISC Buttons (Calculator and Favicon) -->
+  <div id="miscButtons">
+    <button id="panicButton" class="navigate-button-small" onclick="toggleCalculator()">Calculator Button</button>
+    <button id="faviconButton" class="navigate-button-small" onclick="changeFavicon()">Change Favicon</button>
+    <div id="calculatorContainer"></div>
+  </div>
 
-<button style= 
-  "background-color: rgb(0, 0, 255);  
-  color: white;" onclick="colorFn(this)"><class="btn btn-success" onclick=" window.open('https://dogestforvpsig.vercel.app/apps','_blank')"> Apps</button>
+  <!-- Miscellaneous Toggle Button (Always Visible) -->
+  <button id="miscToggleBtn" class="navigate-button-small" onclick="toggleMiscButtons()">Miscellaneous</button>
 
-<button style= 
-  "background-color: rgb(89, 89, 179);  
-  color: white;" onclick="colorFn(this)"><class="btn btn-success" onclick=" window.open('https://dogestforvpsig.vercel.app/gms','_blank')"> Games</button>
+  <!-- Particle Animation Script -->
+  <script>
+    // Update title on textarea input
+    document.getElementById("titleInput").addEventListener("input", function(event) {
+      const newTitle = event.target.value;
+      document.title = newTitle;
+      document.getElementById("title").textContent = newTitle;
+    });
+    // Canvas setup
+    const canvas = document.getElementById("particleCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let particles = [];
+    let numParticles = 100;
+    let particleSize = 3; // Default particle size
+    let particleColor = "#ffffff";
+    let isDarkMode = true;
+    let particleShape = "circle"; // Default particle shape
 
-<button style= 
-  "background-color: rgb(179, 89, 89);  
-  color: white;" onclick="colorFn(this)"><class="btn btn-success" onclick=" window.open('https://dogestforvpsig.vercel.app/settings.html','_blank')"> Settings</button>
-<button style= 
-  "background-color: rgb(0, 0, 255);  
-  color: white;" onclick="colorFn(this)"><class="btn btn-success" onclick=" window.open('https://dogestforvpsig.vercel.app/','_blank')"> Search</button>
-<P></P>
- <html>
+    let activeTemplate = null;
+    const templateColors = {
+      warm: ["#FF5733", "#FFC300", "#FF8D1A", "#FF6F61"],
+      cold: ["#33C1FF", "#335BFF", "#33FFBD", "#2D9CDB"],
+      pastel: ["#FFB3BA", "#FFDFBA", "#FFFFBA", "#BAFFC9", "#BAE1FF"]
+    };
+    const templateBackgrounds = {
+      warm: "#FFEBE5",
+      cold: "#E0F7FF",
+      pastel: "#6E6E8F"
+    };
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = particleSize;
+        this.speedX = Math.random() * 2 - 1;
+        this.speedY = Math.random() * 2 - 1;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+      draw() {
+        let drawColor = particleColor;
+        if (activeTemplate && templateColors[activeTemplate]) {
+          const colors = templateColors[activeTemplate];
+          drawColor = colors[Math.floor(Math.random() * colors.length)];
+        }
+        ctx.fillStyle = drawColor;
+        ctx.beginPath();
+        if (particleShape === "square") {
+          ctx.fillRect(this.x, this.y, this.size, this.size);
+        } else if (particleShape === "triangle") {
+          ctx.moveTo(this.x, this.y);
+          ctx.lineTo(this.x + this.size, this.y + this.size);
+          ctx.lineTo(this.x - this.size, this.y + this.size);
+          ctx.closePath();
+        } else if (particleShape === "star") {
+          ctx.moveTo(this.x, this.y - this.size);
+          for (let i = 0; i < 5; i++) {
+            const angle = (i * 144) * (Math.PI / 180);
+            const x = this.x + this.size * Math.sin(angle);
+            const y = this.y - this.size * Math.cos(angle);
+            ctx.lineTo(x, y);
+          }
+          ctx.closePath();
+        } else {
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        }
+        ctx.fill();
+      }
+    }
 
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < numParticles; i++) {
+        particles.push(new Particle());
+      }
+    }
 
- <!DOCTYPE html>
- <html lang="en">
- <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Original Title</title>
-   <style>
-     body {
-       margin: 0;
-       overflow: hidden;
-       background: black;
-       color: white;
-       text-align: center;
-       transition: background 0.3s, color 0.3s;
-     }
-     canvas {
-       position: fixed;
-       top: 0;
-       left: 0;
-       width: 100%;
-       height: 100%;
-     }
-     .content {
-       position: relative;
-       z-index: 1;
-       margin-top: 50px;
-     }
-     .controls {
-       position: relative;
-       z-index: 1;
-       margin-top: 20px;
-     }
-     .color-mode-container {
-       display: flex;
-       align-items: center;
-       justify-content: center;
-       gap: 10px;
-       margin-top: 10px;
-     }
-     .template-container {
-       margin-top: 10px;
-     }
-     .template-container button {
-       padding: 5px 10px;
-       font-size: 14px;
-       margin: 0 5px;
-       cursor: pointer;
-       border: none;
-       border-radius: 3px;
-       background-color: #555;
-       color: white;
-     }
-     .toggle-mode {
-       padding: 5px 10px;
-       border: none;
-       cursor: pointer;
-       font-size: 14px;
-     }
-     .navigate-button {
-       padding: 10px 20px;
-       font-size: 16px;
-       cursor: pointer;
-       margin-top: 20px;
-       background-color: #007bff;
-       color: white;
-       border: none;
-       border-radius: 5px;
-     }
-   </style>
- </head>
- <body>
-   <!-- Main content container -->
-   <div id="mainContent">
-     <canvas id="particleCanvas"></canvas>
-     <div class="content">
-       <h1 id="title">Original Title</h1>
-       <textarea id="titleInput" style="width: 300px; height: 100px;" placeholder="Type here to change the title..."></textarea>
-       <div class="controls">
-         <label for="particleSlider">Particles: </label>
-         <input type="range" id="particleSlider" min="10" max="500" value="100">
-         
-         <label for="sizeSlider">Size: </label>
-         <input type="range" id="sizeSlider" min="1" max="10" value="3">
- 
-         <div class="color-mode-container">
-           <label for="colorPicker">Color: </label>
-           <input type="color" id="colorPicker" value="#ffffff">
-           <button id="toggleMode" class="toggle-mode">Light Mode</button>
-         </div>
-         <!-- Template Buttons -->
-         <div class="template-container">
-           <span>Templates:</span>
-           <button onclick="setTemplate('warm')">Warm</button>
-           <button onclick="setTemplate('cold')">Cold</button>
-           <button onclick="setTemplate('pastel')">Pastel</button>
-           <button onclick="setTemplate(null)">Default</button>
-         </div>
-         <!-- Particle Shape Buttons -->
-         <div class="template-container">
-           <span>Particle Shapes:</span>
-           <button onclick="setParticleShape('circle')">Circle</button>
-           <button onclick="setParticleShape('square')">Square</button>
-           <button onclick="setParticleShape('triangle')">Triangle</button>
-           <button onclick="setParticleShape('star')">Star</button>
-         </div>
-       </div>
-       <button class="navigate-button" onclick="hideEverything()">Hide Particles</button>
-     </div>
-   </div>
- 
-   <!-- Hidden back container -->
-   <div id="backContainer" style="display: none; text-align: center; margin-top: 50px;">
-     <button id="backButton" class="navigate-button" onclick="showEverything()">Show Particles</button>
-   </div>
- 
-   <script>
-     // Update title on textarea input
-     document.getElementById("titleInput").addEventListener("input", function(event) {
-       const newTitle = event.target.value;
-       document.title = newTitle;
-       document.getElementById("title").textContent = newTitle;
-     });
-     // Canvas setup
-     const canvas = document.getElementById("particleCanvas");
-     const ctx = canvas.getContext("2d");
-     canvas.width = window.innerWidth;
-     canvas.height = window.innerHeight;
-     let particles = [];
-     let numParticles = 100;
-     let particleSize = 3;  // Default particle size
-     let particleColor = "#ffffff";
-     let isDarkMode = true;
-     let particleShape = 'circle';  // Default particle shape
- 
-     let activeTemplate = null;
-     const templateColors = {
-       warm: ["#FF5733", "#FFC300", "#FF8D1A", "#FF6F61"],
-       cold: ["#33C1FF", "#335BFF", "#33FFBD", "#2D9CDB"],
-       pastel: ["#FFB3BA", "#FFDFBA", "#FFFFBA", "#BAFFC9", "#BAE1FF"]
-     };
-     const templateBackgrounds = {
-       warm: "#FFEBE5",   // Warm light background
-       cold: "#E0F7FF",   // Cool light blue background
-       pastel: "#6E6E8F"  // Darker pastel background for better text clarity
-     };
-     class Particle {
-       constructor() {
-         this.x = Math.random() * canvas.width;
-         this.y = Math.random() * canvas.height;
-         this.size = particleSize; // Particle size is now dynamic
-         this.speedX = Math.random() * 2 - 1;
-         this.speedY = Math.random() * 2 - 1;
-       }
-       update() {
-         this.x += this.speedX;
-         this.y += this.speedY;
-         if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-         if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-       }
-       draw() {
-         let drawColor = particleColor;
-         if (activeTemplate && templateColors[activeTemplate]) {
-           const colors = templateColors[activeTemplate];
-           drawColor = colors[Math.floor(Math.random() * colors.length)];
-         }
-         ctx.fillStyle = drawColor;
-         ctx.beginPath();
-         if (particleShape === 'square') {
-           ctx.fillRect(this.x, this.y, this.size, this.size);
-         } else if (particleShape === 'triangle') {
-           ctx.moveTo(this.x, this.y);
-           ctx.lineTo(this.x + this.size, this.y + this.size);
-           ctx.lineTo(this.x - this.size, this.y + this.size);
-           ctx.closePath();
-         } else if (particleShape === 'star') {
-           ctx.moveTo(this.x, this.y - this.size);
-           for (let i = 0; i < 5; i++) {
-             const angle = (i * 144) * (Math.PI / 180); // 144° for 5-pointed star
-             const x = this.x + this.size * Math.sin(angle);
-             const y = this.y - this.size * Math.cos(angle);
-             ctx.lineTo(x, y);
-           }
-           ctx.closePath();
-         } else {
-           ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-         }
-         ctx.fill();
-       }
-     }
- 
-     function initParticles() {
-       particles = [];
-       for (let i = 0; i < numParticles; i++) {
-         particles.push(new Particle());
-       }
-     }
- 
-     function animateParticles() {
-       ctx.clearRect(0, 0, canvas.width, canvas.height);
-       particles.forEach(particle => {
-         particle.update();
-         particle.draw();
-       });
-       requestAnimationFrame(animateParticles);
-     }
- 
-     document.getElementById("particleSlider").addEventListener("input", function(event) {
-       numParticles = event.target.value;
-       initParticles();
-     });
- 
-     document.getElementById("sizeSlider").addEventListener("input", function(event) {
-       particleSize = event.target.value;
-       particles.forEach(particle => {
-         particle.size = particleSize;
-       });
-     });
- 
-     document.getElementById("colorPicker").addEventListener("input", function(event) {
-       activeTemplate = null;
-       particleColor = event.target.value;
-       document.body.style.background = isDarkMode ? "black" : "white";
-     });
- 
-     document.getElementById("toggleMode").addEventListener("click", function() {
-       isDarkMode = !isDarkMode;
-       if (isDarkMode) {
-         if (!activeTemplate) {
-           document.body.style.background = "black";
-         }
-         document.body.style.color = "white";
-         this.textContent = "Light Mode";
-         if (!activeTemplate) particleColor = "#ffffff";
-       } else {
-         if (!activeTemplate) {
-           document.body.style.background = "white";
-         }
-         document.body.style.color = "black";
-         this.textContent = "Dark Mode";
-         if (!activeTemplate) particleColor = "#000000";
-       }
-     });
- 
-     function setTemplate(template) {
-       activeTemplate = template;
-       if (activeTemplate && templateBackgrounds[activeTemplate]) {
-         document.body.style.background = templateBackgrounds[activeTemplate];
-       } else {
-         document.body.style.background = isDarkMode ? "black" : "white";
-       }
-     }
- 
-     function setParticleShape(shape) {
-       particleShape = shape;
-       initParticles();
-     }
- 
-     window.addEventListener("resize", () => {
-       canvas.width = window.innerWidth;
-       canvas.height = window.innerHeight;
-       initParticles();
-     });
- 
-     initParticles();
-     animateParticles();
- 
-     function hideEverything() {
-       document.getElementById("mainContent").style.display = "none";
-       document.getElementById("backContainer").style.display = "block";
-     }
- 
-     function showEverything() {
-       document.getElementById("mainContent").style.display = "block";
-       document.getElementById("backContainer").style.display = "none";
-     }
-   </script>
- </body>
- </html>
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+      requestAnimationFrame(animateParticles);
+    }
 
- <button id="panicButton" class="navigate-button" onclick="toggleCalculator()">Calculator Button</button>
-<button id="faviconButton" class="navigate-button" onclick="changeFavicon()">Change Favicon</button>
+    document.getElementById("particleSlider").addEventListener("input", function(event) {
+      numParticles = event.target.value;
+      initParticles();
+    });
 
-<div id="calculatorContainer"></div>
+    document.getElementById("sizeSlider").addEventListener("input", function(event) {
+      particleSize = event.target.value;
+      particles.forEach(particle => {
+        particle.size = particleSize;
+      });
+    });
 
-<style>
-  #calculator {
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    display: none;
-  }
-  #calculator input {
-    width: 100%;
-    font-size: 20px;
-    margin-bottom: 10px;
-    text-align: right;
-  }
-  #calculator button {
-    font-size: 18px;
-    padding: 10px;
-    margin: 5px;
-    width: 23%;
-  }
-  .navigate-button {
-    padding: 3px 6px;
-    font-size: 12px;
-  }
-</style>
+    document.getElementById("colorPicker").addEventListener("input", function(event) {
+      activeTemplate = null;
+      particleColor = event.target.value;
+      document.body.style.background = isDarkMode ? "black" : "white";
+    });
 
-<script>
-  function toggleCalculator() {
-    let calculatorDiv = document.getElementById("calculator");
-    let panicButton = document.getElementById("panicButton");
-    
-    if (!calculatorDiv) {
-      calculatorDiv = document.createElement("div");
-      calculatorDiv.id = "calculator";
-      calculatorDiv.innerHTML = `
-        <input type="text" id="calcDisplay" disabled>
-        <br>
-        <button onclick="clearDisplay()">C</button>
-        <button onclick="addToDisplay('1')">1</button>
-        <button onclick="addToDisplay('2')">2</button>
-        <button onclick="addToDisplay('+')">+</button>
-        <br>
-        <button onclick="addToDisplay('3')">3</button>
-        <button onclick="addToDisplay('4')">4</button>
-        <button onclick="addToDisplay('5')">5</button>
-        <button onclick="addToDisplay('-')">-</button>
-        <br>
-        <button onclick="addToDisplay('6')">6</button>
-        <button onclick="addToDisplay('7')">7</button>
-        <button onclick="addToDisplay('8')">8</button>
-        <button onclick="addToDisplay('*')">*</button>
-        <br>
-        <button onclick="addToDisplay('9')">9</button>
-        <button onclick="addToDisplay('0')">0</button>
-        <button onclick="calculateResult()">=</button>
-        <button onclick="addToDisplay('/')">/</button>
-        <br>
-      `;
-      document.getElementById("calculatorContainer").appendChild(calculatorDiv);
+    document.getElementById("toggleMode").addEventListener("click", function() {
+      isDarkMode = !isDarkMode;
+      if (isDarkMode) {
+        if (!activeTemplate) {
+          document.body.style.background = "black";
+        }
+        document.body.style.color = "white";
+        this.textContent = "Light Mode";
+        if (!activeTemplate) particleColor = "#ffffff";
+      } else {
+        if (!activeTemplate) {
+          document.body.style.background = "white";
+        }
+        document.body.style.color = "black";
+        this.textContent = "Dark Mode";
+        if (!activeTemplate) particleColor = "#000000";
+      }
+    });
+
+    function setTemplate(template) {
+      activeTemplate = template;
+      if (activeTemplate && templateBackgrounds[activeTemplate]) {
+        document.body.style.background = templateBackgrounds[activeTemplate];
+      } else {
+        document.body.style.background = isDarkMode ? "black" : "white";
+      }
+    }
+
+    function setParticleShape(shape) {
+      particleShape = shape;
+      initParticles();
+    }
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticles();
+    });
+
+    initParticles();
+    animateParticles();
+
+    function hideEverything() {
+      document.getElementById("mainContent").style.display = "none";
+      document.getElementById("backContainer").style.display = "block";
+    }
+
+    function showEverything() {
+      document.getElementById("mainContent").style.display = "block";
+      document.getElementById("backContainer").style.display = "none";
+    }
+  </script>
+
+  <!-- Calculator and Favicon Scripts -->
+  <script>
+    function toggleCalculator() {
+      let calculatorDiv = document.getElementById("calculator");
+      let panicButton = document.getElementById("panicButton");
+      
+      if (!calculatorDiv) {
+        calculatorDiv = document.createElement("div");
+        calculatorDiv.id = "calculator";
+        calculatorDiv.innerHTML = `
+          <input type="text" id="calcDisplay" disabled>
+          <br>
+          <button onclick="clearDisplay()">C</button>
+          <button onclick="addToDisplay('1')">1</button>
+          <button onclick="addToDisplay('2')">2</button>
+          <button onclick="addToDisplay('+')">+</button>
+          <br>
+          <button onclick="addToDisplay('3')">3</button>
+          <button onclick="addToDisplay('4')">4</button>
+          <button onclick="addToDisplay('5')">5</button>
+          <button onclick="addToDisplay('-')">-</button>
+          <br>
+          <button onclick="addToDisplay('6')">6</button>
+          <button onclick="addToDisplay('7')">7</button>
+          <button onclick="addToDisplay('8')">8</button>
+          <button onclick="addToDisplay('*')">*</button>
+          <br>
+          <button onclick="addToDisplay('9')">9</button>
+          <button onclick="addToDisplay('0')">0</button>
+          <button onclick="calculateResult()">=</button>
+          <button onclick="addToDisplay('/')">/</button>
+          <br>
+        `;
+        document.getElementById("calculatorContainer").appendChild(calculatorDiv);
+      }
+      
+      if (calculatorDiv.style.display === "none" || calculatorDiv.style.display === "") {
+        calculatorDiv.style.display = "block";
+        panicButton.textContent = "Restore View";
+      } else {
+        calculatorDiv.style.display = "none";
+        panicButton.textContent = "Calculator Button";
+      }
     }
     
-    if (calculatorDiv.style.display === "none" || calculatorDiv.style.display === "") {
-      calculatorDiv.style.display = "block";
-      panicButton.textContent = "Restore View";
-    } else {
-      calculatorDiv.style.display = "none";
-      panicButton.textContent = "Calculator Button";
+    function addToDisplay(value) {
+      document.getElementById("calcDisplay").value += value;
     }
-  }
-  
-  function addToDisplay(value) {
-    document.getElementById("calcDisplay").value += value;
-  }
-  
-  function clearDisplay() {
-    document.getElementById("calcDisplay").value = "";
-  }
-  
-  function calculateResult() {
-    try {
-      document.getElementById("calcDisplay").value = eval(document.getElementById("calcDisplay").value);
-    } catch {
-      document.getElementById("calcDisplay").value = "Error";
+    
+    function clearDisplay() {
+      document.getElementById("calcDisplay").value = "";
     }
-  }
+    
+    // Helper function to convert a decimal to a simplified fraction
+    function decimalToFraction(x) {
+      if (Math.floor(x) === x) return x.toString();
+      var tolerance = 1.0e-6;
+      var h1 = 1, h2 = 0, k1 = 0, k2 = 1;
+      var b = x;
+      while (true) {
+        var a = Math.floor(b);
+        var h = a * h1 + h2;
+        var k = a * k1 + k2;
+        if (Math.abs(x - h / k) < tolerance) {
+          return h + "/" + k;
+        }
+        h2 = h1;
+        h1 = h;
+        k2 = k1;
+        k1 = k;
+        b = 1 / (b - a);
+      }
+    }
+    
+    // Updated calculateResult function that shows the result as a fraction.
+    function calculateResult() {
+      try {
+        let input = document.getElementById("calcDisplay").value;
+        let result = eval(input);
+        let fraction = decimalToFraction(result);
+        document.getElementById("calcDisplay").value = fraction;
+      } catch {
+        document.getElementById("calcDisplay").value = "Error";
+      }
+    }
+    
+    // Updated changeFavicon function with an extra option for the Gray Globe logo.
+    function changeFavicon() {
+      let choice = prompt("Choose a favicon: Type 'classroom' for Google Classroom, 'google' for Google, or 'globe' for Gray Globe");
+      let faviconURL = "";
+      
+      if (choice === "classroom") {
+        faviconURL = "https://www.gstatic.com/classroom/favicon.png";
+      } else if (choice === "google") {
+        faviconURL = "https://www.google.com/favicon.ico";
+      } else if (choice === "globe") {
+        faviconURL = "https://upload.wikimedia.org/wikipedia/commons/8/89/Globe_icon_gray.png";
+      } else {
+        alert("Invalid choice. Please type 'classroom', 'google', or 'globe'.");
+        return;
+      }
+      
+      let favicon = document.querySelector("link[rel='icon']") || document.createElement("link");
+      favicon.rel = "icon";
+      favicon.href = faviconURL;
+      document.head.appendChild(favicon);
+    }
+  </script>
 
-  function changeFavicon() {
-    let choice = prompt("Choose a favicon: Type 'classroom' for Google Classroom or 'google' for Google");
-    let faviconURL = "";
-    
-    if (choice === "classroom") {
-      faviconURL = "https://www.gstatic.com/classroom/favicon.png";
-    } else if (choice === "google") {
-      faviconURL = "https://www.google.com/favicon.ico";
-    } else {
-      alert("Invalid choice. Please type 'classroom' or 'google'.");
-      return;
+  <!-- Toggle Miscellaneous Buttons Script -->
+  <script>
+    function toggleMiscButtons() {
+      const miscContainer = document.getElementById("miscButtons");
+      const toggleBtn = document.getElementById("miscToggleBtn");
+      if (miscContainer.style.display === "none" || miscContainer.style.display === "") {
+        miscContainer.style.display = "block";
+        toggleBtn.textContent = "Hide Miscellaneous";
+      } else {
+        miscContainer.style.display = "none";
+        toggleBtn.textContent = "Show Miscellaneous";
+      }
     }
-    
-    let favicon = document.querySelector("link[rel='icon']") || document.createElement("link");
-    favicon.rel = "icon";
-    favicon.href = faviconURL;
-    document.head.appendChild(favicon);
-  }
-</script>
+  </script>
+</body>
+</html>
