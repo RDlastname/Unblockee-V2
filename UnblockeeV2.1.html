@@ -120,6 +120,16 @@
       padding: 8px 16px;
       font-size: 14px;
     }
+    /* Developer Info Display */
+    #developerInfo {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 10px;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -175,15 +185,20 @@
     </div>
   </div>
 
-  <!-- MISC Buttons (Calculator and Favicon) -->
+  <!-- MISC Buttons (Calculator, Favicon, Developer Only, Destroy Page) -->
   <div id="miscButtons">
     <button id="panicButton" class="navigate-button-small" onclick="toggleCalculator()">Calculator Button</button>
     <button id="faviconButton" class="navigate-button-small" onclick="changeFavicon()">Change Favicon</button>
+    <button id="developerButton" class="navigate-button-small" onclick="promptForDeveloperAccess()">Developer Only</button>
+    <button id="destroyButton" class="navigate-button-small" onclick="destroyPage()">Destroy Page</button>
     <div id="calculatorContainer"></div>
   </div>
 
   <!-- Miscellaneous Toggle Button (Always Visible) -->
   <button id="miscToggleBtn" class="navigate-button-small" onclick="toggleMiscButtons()">Miscellaneous</button>
+
+  <!-- Developer Info Display -->
+  <div id="developerInfo"></div>
 
   <!-- Particle Animation Script -->
   <script>
@@ -207,269 +222,125 @@
 
     let activeTemplate = null;
     const templateColors = {
-      warm: ["#FF5733", "#FFC300", "#FF8D1A", "#FF6F61"],
-      cold: ["#33C1FF", "#335BFF", "#33FFBD", "#2D9CDB"],
-      pastel: ["#FFB3BA", "#FFDFBA", "#FFFFBA", "#BAFFC9", "#BAE1FF"]
+      warm: ["#FF5733", "#FFC300", "#FF8D1A", "#FFBD33", "#FF5733"],
+      cold: ["#00FFFF", "#007FFF", "#1E90FF", "#00BFFF", "#4682B4"],
+      pastel: ["#FFB3BA", "#FFDFBA", "#FFFFBA", "#BAFFC9", "#BAE1FF"],
+      default: ["#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff"],
     };
-    const templateBackgrounds = {
-      warm: "#FFEBE5",
-      cold: "#E0F7FF",
-      pastel: "#6E6E8F"
-    };
-    class Particle {
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = particleSize;
-        this.speedX = Math.random() * 2 - 1;
-        this.speedY = Math.random() * 2 - 1;
-      }
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-      }
-      draw() {
-        let drawColor = particleColor;
-        if (activeTemplate && templateColors[activeTemplate]) {
-          const colors = templateColors[activeTemplate];
-          drawColor = colors[Math.floor(Math.random() * colors.length)];
-        }
-        ctx.fillStyle = drawColor;
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((particle) => {
         ctx.beginPath();
-        if (particleShape === "square") {
-          ctx.fillRect(this.x, this.y, this.size, this.size);
-        } else if (particleShape === "triangle") {
-          ctx.moveTo(this.x, this.y);
-          ctx.lineTo(this.x + this.size, this.y + this.size);
-          ctx.lineTo(this.x - this.size, this.y + this.size);
-          ctx.closePath();
-        } else if (particleShape === "star") {
-          ctx.moveTo(this.x, this.y - this.size);
-          for (let i = 0; i < 5; i++) {
-            const angle = (i * 144) * (Math.PI / 180);
-            const x = this.x + this.size * Math.sin(angle);
-            const y = this.y - this.size * Math.cos(angle);
-            ctx.lineTo(x, y);
-          }
-          ctx.closePath();
-        } else {
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = particle.color;
+        switch (particleShape) {
+          case "square":
+            ctx.rect(particle.x, particle.y, particleSize, particleSize);
+            break;
+          case "triangle":
+            ctx.moveTo(particle.x, particle.y);
+            ctx.lineTo(particle.x + particleSize, particle.y + particleSize);
+            ctx.lineTo(particle.x - particleSize, particle.y + particleSize);
+            ctx.closePath();
+            break;
+          case "star":
+            ctx.moveTo(particle.x, particle.y);
+            for (let i = 0; i < 5; i++) {
+              ctx.lineTo(
+                particle.x + Math.cos((i * 2 * Math.PI) / 5) * particleSize,
+                particle.y + Math.sin((i * 2 * Math.PI) / 5) * particleSize
+              );
+            }
+            ctx.closePath();
+            break;
+          case "circle":
+          default:
+            ctx.arc(particle.x, particle.y, particleSize, 0, Math.PI * 2);
+            break;
         }
         ctx.fill();
-      }
-    }
-
-    function initParticles() {
-      particles = [];
-      for (let i = 0; i < numParticles; i++) {
-        particles.push(new Particle());
-      }
-    }
-
-    function animateParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(particle => {
-        particle.update();
-        particle.draw();
+        particle.x += particle.speedX;
+        particle.y += particle.speedY;
+        if (particle.x > canvas.width) particle.x = 0;
+        if (particle.y > canvas.height) particle.y = 0;
+        if (particle.x < 0) particle.x = canvas.width;
+        if (particle.y < 0) particle.y = canvas.height;
       });
-      requestAnimationFrame(animateParticles);
     }
 
-    document.getElementById("particleSlider").addEventListener("input", function(event) {
+    function updateParticles() {
+      particles = Array.from({ length: numParticles }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        speedX: (Math.random() - 0.5) * 2,
+        speedY: (Math.random() - 0.5) * 2,
+        color: particleColor,
+      }));
+    }
+
+    // Particle Sliders
+    document.getElementById("particleSlider").addEventListener("input", function (event) {
       numParticles = event.target.value;
-      initParticles();
+      updateParticles();
     });
-
-    document.getElementById("sizeSlider").addEventListener("input", function(event) {
+    document.getElementById("sizeSlider").addEventListener("input", function (event) {
       particleSize = event.target.value;
-      particles.forEach(particle => {
-        particle.size = particleSize;
-      });
     });
 
-    document.getElementById("colorPicker").addEventListener("input", function(event) {
-      activeTemplate = null;
+    // Color Picker
+    document.getElementById("colorPicker").addEventListener("input", function (event) {
       particleColor = event.target.value;
-      document.body.style.background = isDarkMode ? "black" : "white";
+      updateParticles();
     });
 
-    document.getElementById("toggleMode").addEventListener("click", function() {
+    // Toggle Dark/Light Mode
+    document.getElementById("toggleMode").addEventListener("click", function () {
       isDarkMode = !isDarkMode;
-      if (isDarkMode) {
-        if (!activeTemplate) {
-          document.body.style.background = "black";
-        }
-        document.body.style.color = "white";
-        this.textContent = "Light Mode";
-        if (!activeTemplate) particleColor = "#ffffff";
-      } else {
-        if (!activeTemplate) {
-          document.body.style.background = "white";
-        }
-        document.body.style.color = "black";
-        this.textContent = "Dark Mode";
-        if (!activeTemplate) particleColor = "#000000";
-      }
+      document.body.style.background = isDarkMode ? "black" : "white";
+      document.body.style.color = isDarkMode ? "white" : "black";
+      this.textContent = isDarkMode ? "Light Mode" : "Dark Mode";
     });
 
+    // Particle Template Switcher
     function setTemplate(template) {
       activeTemplate = template;
-      if (activeTemplate && templateBackgrounds[activeTemplate]) {
-        document.body.style.background = templateBackgrounds[activeTemplate];
-      } else {
-        document.body.style.background = isDarkMode ? "black" : "white";
-      }
+      const colors = templateColors[template || "default"];
+      particles.forEach((particle, index) => {
+        particle.color = colors[index % colors.length];
+      });
+      drawParticles();
     }
 
+    // Particle Shape Switcher
     function setParticleShape(shape) {
       particleShape = shape;
-      initParticles();
+      drawParticles();
     }
 
-    window.addEventListener("resize", () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initParticles();
-    });
-
-    initParticles();
-    animateParticles();
-
+    // Hide and Show Everything
     function hideEverything() {
       document.getElementById("mainContent").style.display = "none";
       document.getElementById("backContainer").style.display = "block";
     }
-
     function showEverything() {
       document.getElementById("mainContent").style.display = "block";
       document.getElementById("backContainer").style.display = "none";
     }
-  </script>
 
-  <!-- Calculator and Favicon Scripts -->
-  <script>
-    function toggleCalculator() {
-      let calculatorDiv = document.getElementById("calculator");
-      let panicButton = document.getElementById("panicButton");
-      
-      if (!calculatorDiv) {
-        calculatorDiv = document.createElement("div");
-        calculatorDiv.id = "calculator";
-        calculatorDiv.innerHTML = `
-          <input type="text" id="calcDisplay" disabled>
-          <br>
-          <button onclick="clearDisplay()">C</button>
-          <button onclick="addToDisplay('1')">1</button>
-          <button onclick="addToDisplay('2')">2</button>
-          <button onclick="addToDisplay('+')">+</button>
-          <br>
-          <button onclick="addToDisplay('3')">3</button>
-          <button onclick="addToDisplay('4')">4</button>
-          <button onclick="addToDisplay('5')">5</button>
-          <button onclick="addToDisplay('-')">-</button>
-          <br>
-          <button onclick="addToDisplay('6')">6</button>
-          <button onclick="addToDisplay('7')">7</button>
-          <button onclick="addToDisplay('8')">8</button>
-          <button onclick="addToDisplay('*')">*</button>
-          <br>
-          <button onclick="addToDisplay('9')">9</button>
-          <button onclick="addToDisplay('0')">0</button>
-          <button onclick="calculateResult()">=</button>
-          <button onclick="addToDisplay('/')">/</button>
-          <br>
-        `;
-        document.getElementById("calculatorContainer").appendChild(calculatorDiv);
-      }
-      
-      if (calculatorDiv.style.display === "none" || calculatorDiv.style.display === "") {
-        calculatorDiv.style.display = "block";
-        panicButton.textContent = "Restore View";
-      } else {
-        calculatorDiv.style.display = "none";
-        panicButton.textContent = "Calculator Button";
-      }
-    }
-    
-    function addToDisplay(value) {
-      document.getElementById("calcDisplay").value += value;
-    }
-    
-    function clearDisplay() {
-      document.getElementById("calcDisplay").value = "";
-    }
-    
-    // Helper function to convert a decimal to a simplified fraction
-    function decimalToFraction(x) {
-      if (Math.floor(x) === x) return x.toString();
-      var tolerance = 1.0e-6;
-      var h1 = 1, h2 = 0, k1 = 0, k2 = 1;
-      var b = x;
-      while (true) {
-        var a = Math.floor(b);
-        var h = a * h1 + h2;
-        var k = a * k1 + k2;
-        if (Math.abs(x - h / k) < tolerance) {
-          return h + "/" + k;
-        }
-        h2 = h1;
-        h1 = h;
-        k2 = k1;
-        k1 = k;
-        b = 1 / (b - a);
-      }
-    }
-    
-    // Updated calculateResult function that shows the result as a fraction.
-    function calculateResult() {
-      try {
-        let input = document.getElementById("calcDisplay").value;
-        let result = eval(input);
-        let fraction = decimalToFraction(result);
-        document.getElementById("calcDisplay").value = fraction;
-      } catch {
-        document.getElementById("calcDisplay").value = "Error";
-      }
-    }
-    
-    // Updated changeFavicon function with an extra option for the Gray Globe logo.
-    function changeFavicon() {
-      let choice = prompt("Choose a favicon: Type 'classroom' for Google Classroom, 'google' for Google, or 'globe' for Gray Globe");
-      let faviconURL = "";
-      
-      if (choice === "classroom") {
-        faviconURL = "https://www.gstatic.com/classroom/favicon.png";
-      } else if (choice === "google") {
-        faviconURL = "https://www.google.com/favicon.ico";
-      } else if (choice === "globe") {
-        faviconURL = "https://upload.wikimedia.org/wikipedia/commons/8/89/Globe_icon_gray.png";
-      } else {
-        alert("Invalid choice. Please type 'classroom', 'google', or 'globe'.");
-        return;
-      }
-      
-      let favicon = document.querySelector("link[rel='icon']") || document.createElement("link");
-      favicon.rel = "icon";
-      favicon.href = faviconURL;
-      document.head.appendChild(favicon);
-    }
-  </script>
-
-  <!-- Toggle Miscellaneous Buttons Script -->
-  <script>
+    // Miscellaneous Buttons
     function toggleMiscButtons() {
-      const miscContainer = document.getElementById("miscButtons");
-      const toggleBtn = document.getElementById("miscToggleBtn");
-      if (miscContainer.style.display === "none" || miscContainer.style.display === "") {
-        miscContainer.style.display = "block";
-        toggleBtn.textContent = "Hide Miscellaneous";
-      } else {
-        miscContainer.style.display = "none";
-        toggleBtn.textContent = "Show Miscellaneous";
-      }
+      const miscButtons = document.getElementById("miscButtons");
+      miscButtons.style.display = miscButtons.style.display === "none" ? "block" : "none";
     }
+
+    // Destroy Page (clears the entire content of the page)
+    function destroyPage() {
+      document.body.innerHTML = "<h1 style='color:red'>Page Destroyed!</h1>";
+    }
+
+    // Initialize particles
+    updateParticles();
+    setInterval(drawParticles, 30);
   </script>
 </body>
 </html>
