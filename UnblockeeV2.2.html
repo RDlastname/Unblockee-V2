@@ -36,6 +36,11 @@
       padding: 3px 6px;
       font-size: 12px;
       margin: 5px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
     }
     /* Main Content Wrapper */
     #mainContentWrapper {
@@ -102,14 +107,17 @@
       padding: 10px;
       margin: 5px;
       width: 23%;
+      cursor: pointer;
     }
-    /* MISC Buttons Container */
+    /* MISC Buttons Container (Initially hidden) */
     #miscButtons {
       display: none; /* Hidden by default */
       position: fixed;
       bottom: 10px;
       left: 10px;
       z-index: 5;
+      flex-direction: column;
+      gap: 5px;
     }
     /* Miscellaneous Toggle Button Style */
     #miscToggleBtn {
@@ -120,15 +128,18 @@
       padding: 8px 16px;
       font-size: 14px;
     }
-    /* Developer Info Display */
-    #developerInfo {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      color: white;
-      background-color: rgba(0, 0, 0, 0.7);
-      padding: 10px;
+    /* Developer Area Styles */
+    #devArea {
       display: none;
+      position: fixed;
+      top: 80px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 10px;
+      border-radius: 5px;
+      color: white;
+      z-index: 20;
+      text-align: left;
     }
   </style>
 </head>
@@ -189,7 +200,7 @@
   <div id="miscButtons">
     <button id="panicButton" class="navigate-button-small" onclick="toggleCalculator()">Calculator Button</button>
     <button id="faviconButton" class="navigate-button-small" onclick="changeFavicon()">Change Favicon</button>
-    <button id="developerButton" class="navigate-button-small" onclick="promptForDeveloperAccess()">Developer Only</button>
+    <button id="devButton" class="navigate-button-small" onclick="showDevArea()">Developer Only</button>
     <button id="destroyButton" class="navigate-button-small" onclick="destroyPage()">Destroy Page</button>
     <div id="calculatorContainer"></div>
   </div>
@@ -197,8 +208,14 @@
   <!-- Miscellaneous Toggle Button (Always Visible) -->
   <button id="miscToggleBtn" class="navigate-button-small" onclick="toggleMiscButtons()">Miscellaneous</button>
 
-  <!-- Developer Info Display -->
-  <div id="developerInfo"></div>
+  <!-- Developer Area (Hidden by default) -->
+  <div id="devArea">
+    <h3>Developer Info</h3>
+    <p id="fpsInfo">FPS: Calculating...</p>
+    <p id="memoryInfo">Memory: Calculating...</p>
+    <button class="navigate-button-small" onclick="applyDeveloperSkin()">Apply Developer Skin</button>
+    <button class="navigate-button-small" onclick="hideDevArea()">Close Developer Area</button>
+  </div>
 
   <!-- Particle Animation Script -->
   <script>
@@ -222,125 +239,282 @@
 
     let activeTemplate = null;
     const templateColors = {
-      warm: ["#FF5733", "#FFC300", "#FF8D1A", "#FFBD33", "#FF5733"],
-      cold: ["#00FFFF", "#007FFF", "#1E90FF", "#00BFFF", "#4682B4"],
-      pastel: ["#FFB3BA", "#FFDFBA", "#FFFFBA", "#BAFFC9", "#BAE1FF"],
-      default: ["#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff"],
+      warm: ["#FF5733", "#FFC300", "#FF8D1A", "#FF6F61"],
+      cold: ["#33C1FF", "#335BFF", "#33FFBD", "#2D9CDB"],
+      pastel: ["#FFB3BA", "#FFDFBA", "#FFFFBA", "#BAFFC9", "#BAE1FF"]
     };
-
-    function drawParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach((particle) => {
+    const templateBackgrounds = {
+      warm: "#FFEBE5",
+      cold: "#E0F7FF",
+      pastel: "#6E6E8F"
+    };
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = particleSize;
+        this.speedX = Math.random() * 2 - 1;
+        this.speedY = Math.random() * 2 - 1;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+      draw() {
+        let drawColor = particleColor;
+        if (activeTemplate && templateColors[activeTemplate]) {
+          const colors = templateColors[activeTemplate];
+          drawColor = colors[Math.floor(Math.random() * colors.length)];
+        }
+        ctx.fillStyle = drawColor;
         ctx.beginPath();
-        ctx.fillStyle = particle.color;
-        switch (particleShape) {
-          case "square":
-            ctx.rect(particle.x, particle.y, particleSize, particleSize);
-            break;
-          case "triangle":
-            ctx.moveTo(particle.x, particle.y);
-            ctx.lineTo(particle.x + particleSize, particle.y + particleSize);
-            ctx.lineTo(particle.x - particleSize, particle.y + particleSize);
-            ctx.closePath();
-            break;
-          case "star":
-            ctx.moveTo(particle.x, particle.y);
-            for (let i = 0; i < 5; i++) {
-              ctx.lineTo(
-                particle.x + Math.cos((i * 2 * Math.PI) / 5) * particleSize,
-                particle.y + Math.sin((i * 2 * Math.PI) / 5) * particleSize
-              );
-            }
-            ctx.closePath();
-            break;
-          case "circle":
-          default:
-            ctx.arc(particle.x, particle.y, particleSize, 0, Math.PI * 2);
-            break;
+        if (particleShape === "square") {
+          ctx.fillRect(this.x, this.y, this.size, this.size);
+        } else if (particleShape === "triangle") {
+          ctx.moveTo(this.x, this.y);
+          ctx.lineTo(this.x + this.size, this.y + this.size);
+          ctx.lineTo(this.x - this.size, this.y + this.size);
+          ctx.closePath();
+        } else if (particleShape === "star") {
+          ctx.moveTo(this.x, this.y - this.size);
+          for (let i = 0; i < 5; i++) {
+            const angle = (i * 144) * (Math.PI / 180);
+            const x = this.x + this.size * Math.sin(angle);
+            const y = this.y - this.size * Math.cos(angle);
+            ctx.lineTo(x, y);
+          }
+          ctx.closePath();
+        } else {
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         }
         ctx.fill();
-        particle.x += particle.speedX;
-        particle.y += particle.speedY;
-        if (particle.x > canvas.width) particle.x = 0;
-        if (particle.y > canvas.height) particle.y = 0;
-        if (particle.x < 0) particle.x = canvas.width;
-        if (particle.y < 0) particle.y = canvas.height;
+      }
+    }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < numParticles; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(particle => {
+        particle.update();
+        particle.draw();
       });
+      requestAnimationFrame(animateParticles);
     }
 
-    function updateParticles() {
-      particles = Array.from({ length: numParticles }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        speedX: (Math.random() - 0.5) * 2,
-        speedY: (Math.random() - 0.5) * 2,
-        color: particleColor,
-      }));
-    }
-
-    // Particle Sliders
-    document.getElementById("particleSlider").addEventListener("input", function (event) {
+    document.getElementById("particleSlider").addEventListener("input", function(event) {
       numParticles = event.target.value;
-      updateParticles();
+      initParticles();
     });
-    document.getElementById("sizeSlider").addEventListener("input", function (event) {
+
+    document.getElementById("sizeSlider").addEventListener("input", function(event) {
       particleSize = event.target.value;
+      particles.forEach(particle => {
+        particle.size = particleSize;
+      });
     });
 
-    // Color Picker
-    document.getElementById("colorPicker").addEventListener("input", function (event) {
+    document.getElementById("colorPicker").addEventListener("input", function(event) {
+      activeTemplate = null;
       particleColor = event.target.value;
-      updateParticles();
-    });
-
-    // Toggle Dark/Light Mode
-    document.getElementById("toggleMode").addEventListener("click", function () {
-      isDarkMode = !isDarkMode;
       document.body.style.background = isDarkMode ? "black" : "white";
-      document.body.style.color = isDarkMode ? "white" : "black";
-      this.textContent = isDarkMode ? "Light Mode" : "Dark Mode";
     });
 
-    // Particle Template Switcher
+    document.getElementById("toggleMode").addEventListener("click", function() {
+      isDarkMode = !isDarkMode;
+      if (isDarkMode) {
+        if (!activeTemplate) document.body.style.background = "black";
+        document.body.style.color = "white";
+        this.textContent = "Light Mode";
+        if (!activeTemplate) particleColor = "#ffffff";
+      } else {
+        if (!activeTemplate) document.body.style.background = "white";
+        document.body.style.color = "black";
+        this.textContent = "Dark Mode";
+        if (!activeTemplate) particleColor = "#000000";
+      }
+    });
+
     function setTemplate(template) {
       activeTemplate = template;
-      const colors = templateColors[template || "default"];
-      particles.forEach((particle, index) => {
-        particle.color = colors[index % colors.length];
-      });
-      drawParticles();
+      if (activeTemplate && templateBackgrounds[activeTemplate]) {
+        document.body.style.background = templateBackgrounds[activeTemplate];
+      } else {
+        document.body.style.background = isDarkMode ? "black" : "white";
+      }
     }
 
-    // Particle Shape Switcher
     function setParticleShape(shape) {
       particleShape = shape;
-      drawParticles();
+      initParticles();
     }
 
-    // Hide and Show Everything
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticles();
+    });
+
+    initParticles();
+    animateParticles();
+
     function hideEverything() {
       document.getElementById("mainContent").style.display = "none";
       document.getElementById("backContainer").style.display = "block";
     }
+
     function showEverything() {
       document.getElementById("mainContent").style.display = "block";
       document.getElementById("backContainer").style.display = "none";
     }
+  </script>
 
-    // Miscellaneous Buttons
+  <!-- Calculator and Favicon Scripts -->
+  <script>
+    function toggleCalculator() {
+      let calculatorDiv = document.getElementById("calculator");
+      let panicButton = document.getElementById("panicButton");
+      
+      if (!calculatorDiv) {
+        calculatorDiv = document.createElement("div");
+        calculatorDiv.id = "calculator";
+        calculatorDiv.innerHTML = `
+          <input type="text" id="calcDisplay" disabled>
+          <br>
+          <button onclick="clearDisplay()">C</button>
+          <button onclick="addToDisplay('1')">1</button>
+          <button onclick="addToDisplay('2')">2</button>
+          <button onclick="addToDisplay('+')">+</button>
+          <br>
+          <button onclick="addToDisplay('3')">3</button>
+          <button onclick="addToDisplay('4')">4</button>
+          <button onclick="addToDisplay('5')">5</button>
+          <button onclick="addToDisplay('-')">-</button>
+          <br>
+          <button onclick="addToDisplay('6')">6</button>
+          <button onclick="addToDisplay('7')">7</button>
+          <button onclick="addToDisplay('8')">8</button>
+          <button onclick="addToDisplay('*')">*</button>
+          <br>
+          <button onclick="addToDisplay('9')">9</button>
+          <button onclick="addToDisplay('0')">0</button>
+          <button onclick="calculateResult()">=</button>
+          <button onclick="addToDisplay('/')">/</button>
+          <br>
+        `;
+        document.getElementById("calculatorContainer").appendChild(calculatorDiv);
+      }
+      
+      if (calculatorDiv.style.display === "none" || calculatorDiv.style.display === "") {
+        calculatorDiv.style.display = "block";
+        panicButton.textContent = "Restore View";
+      } else {
+        calculatorDiv.style.display = "none";
+        panicButton.textContent = "Calculator Button";
+      }
+    }
+    
+    function addToDisplay(value) {
+      document.getElementById("calcDisplay").value += value;
+    }
+    
+    function clearDisplay() {
+      document.getElementById("calcDisplay").value = "";
+    }
+    
+    function calculateResult() {
+      try {
+        let input = document.getElementById("calcDisplay").value;
+        let result = eval(input);
+        document.getElementById("calcDisplay").value = result;
+      } catch {
+        document.getElementById("calcDisplay").value = "Error";
+      }
+    }
+    
+    function changeFavicon() {
+      let choice = prompt("Choose a favicon: Type 'classroom' for Google Classroom, 'google' for Google, or 'globe' for Blank page");
+      let faviconURL = "";
+      
+      if (choice === "classroom") {
+        faviconURL = "https://www.gstatic.com/classroom/favicon.png";
+      } else if (choice === "google") {
+        faviconURL = "https://www.google.com/favicon.ico";
+      } else if (choice === "globe") {
+        faviconURL = "https://upload.wikimedia.org/wikipedia/commons/8/89/Globe_icon_gray.png";
+      } else {
+        alert("Invalid choice. Please type 'classroom', 'google', or 'globe'.");
+        return;
+      }
+      
+      let favicon = document.querySelector("link[rel='icon']") || document.createElement("link");
+      favicon.rel = "icon";
+      favicon.href = faviconURL;
+      document.head.appendChild(favicon);
+    }
+    
     function toggleMiscButtons() {
-      const miscButtons = document.getElementById("miscButtons");
-      miscButtons.style.display = miscButtons.style.display === "none" ? "block" : "none";
+      const miscContainer = document.getElementById("miscButtons");
+      const toggleBtn = document.getElementById("miscToggleBtn");
+      if (miscContainer.style.display === "none" || miscContainer.style.display === "") {
+        miscContainer.style.display = "flex";
+        toggleBtn.textContent = "Hide Miscellaneous";
+      } else {
+        miscContainer.style.display = "none";
+        toggleBtn.textContent = "Show Miscellaneous";
+      }
+    }
+  </script>
+
+  <!-- Developer & Destroy Functions -->
+  <script>
+    // Developer Only Page functions
+    function showDevArea() {
+      const password = prompt("Enter developer password:");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if (password === "$NS143") {
+        document.getElementById("devArea").style.display = "block";
+        startDevInfo();
+      } else {
+        alert("Incorrect password!");
+      }
     }
 
-    // Destroy Page (clears the entire content of the page)
+    function hideDevArea() {
+      document.getElementById("devArea").style.display = "none";
+    }
+
+    function startDevInfo() {
+      // Simulate FPS update every second
+      setInterval(() => {
+        document.getElementById("fpsInfo").textContent = "FPS: " + (Math.random() * 60).toFixed(2);
+      }, 1000);
+      // Update memory usage if available (else show N/A)
+      setInterval(() => {
+        let mem = (window.performance && window.performance.memory)
+          ? Math.round(window.performance.memory.usedJSHeapSize / 1048576)
+          : "N/A";
+        document.getElementById("memoryInfo").textContent = "Memory: " + mem + " MB";
+      }, 1000);
+    }
+
+    function applyDeveloperSkin() {
+      // Apply a cool gradient background for developers
+      document.body.style.background = "linear-gradient(135deg, #6a11cb, #2575fc)";
+    }
+
+    // Destroy Page function
     function destroyPage() {
-      document.body.innerHTML = "<h1 style='color:red'>Page Destroyed!</h1>";
+      // Remove all page content and display a restore message
+      document.body.innerHTML = "<h1 style='color:white;'>Page Destroyed</h1><button onclick='location.reload()' style='padding:10px 20px; font-size:16px;'>Restore Page</button>";
     }
-
-    // Initialize particles
-    updateParticles();
-    setInterval(drawParticles, 30);
   </script>
 </body>
 </html>
+
