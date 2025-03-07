@@ -124,7 +124,7 @@
       position: fixed;
       top: 10px;
       right: 10px;
-      z-index: 6;
+      z-index: 1000;
       padding: 8px 16px;
       font-size: 14px;
     }
@@ -149,10 +149,27 @@
     <!-- Top Header and Navigation Buttons -->
     <h1>Unblocker Apps</h1>
     <h1>Doge V4</h1>
-    <button style="background-color: rgb(0, 0, 255); color: white;" onclick="window.open('https://dogestforvpsig.vercel.app/apps','_blank')">Apps</button>
-    <button style="background-color: rgb(89, 89, 179); color: white;" onclick="window.open('https://dogestforvpsig.vercel.app/gms','_blank')">Games</button>
-    <button style="background-color: rgb(179, 89, 89); color: white;" onclick="window.open('https://dogestforvpsig.vercel.app/settings.html','_blank')">Settings</button>
-    <button style="background-color: rgb(0, 0, 255); color: white;" onclick="window.open('https://dogestforvpsig.vercel.app/','_blank')">Search</button>
+    <div style="position: absolute; top:-125px; left: 10px; display: flex; flex-direction: column; align-items: flex-start; z-index: 1000; position: relative;">
+      <a href="https://dogestforvpsig.vercel.app/apps" target="_blank">
+          <button style="background-color: rgb(0, 0, 255); color: white; margin: 5px;">Apps</button>
+      </a>
+  
+      <a href="https://dogestforvpsig.vercel.app/gms" target="_blank">
+          <button style="background-color: rgb(89, 89, 179); color: white; margin: 5px;">Games</button>
+      </a>
+  
+      <a href="https://dogestforvpsig.vercel.app/settings.html" target="_blank">
+          <button style="background-color: rgb(179, 89, 89); color: white; margin: 5px;">Settings</button>
+      </a>
+  
+      <a href="https://dogestforvpsig.vercel.app/" target="_blank">
+          <button style="background-color: rgb(0, 0, 255); color: white; margin: 5px;">Search</button>
+      </a>
+  </div>
+  
+  </div>
+  
+  </div>
 
     <!-- Main Particle Animation and Interactive Section -->
     <div id="mainContent">
