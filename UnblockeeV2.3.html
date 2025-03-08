@@ -42,6 +42,16 @@
       border: none;
       border-radius: 5px;
     }
+    /* Adjust main content wrapper to align elements */
+.content {
+  position: absolute;
+  top: -175px; /* Moves it closer to Doge V4 */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  width: 100%;
+}
+
     /* Main Content Wrapper */
     #mainContentWrapper {
       /* Contains top header, particle animation, etc. */
@@ -418,7 +428,7 @@
           <button onclick="addToDisplay('6')">6</button>
           <button onclick="addToDisplay('7')">7</button>
           <button onclick="addToDisplay('8')">8</button>
-          <button onclick="addToDisplay('*')">*</button>
+          <button onclick="addToDisplay('*')">X</button>
           <br>
           <button onclick="addToDisplay('9')">9</button>
           <button onclick="addToDisplay('0')">0</button>
@@ -489,6 +499,22 @@
       }
     }
   </script>
+
+<head>
+  <style>
+    #devArea {
+      position: absolute;
+      top: 69%;  /* Center vertically */
+      left: 5px; /* Keep it near the left */
+      transform: translateY(-50%); /* Adjust for perfect centering */
+      background: rgba(0, 0, 0, 0.8); /* Optional: Makes it more visible */
+      color: white; /* Optional: Better contrast */
+      padding: 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
 
   <!-- Developer & Destroy Functions -->
   <script>
