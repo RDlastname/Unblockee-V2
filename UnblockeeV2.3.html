@@ -621,10 +621,141 @@
         }
 
         // Show the overlay every 25 seconds
-        setInterval(showDiscordOverlay, 25000);
+        setInterval(showDiscordOverlay, 60000);
 
         // Hide the overlay when clicking the button
         document.getElementById("discord-overlay").addEventListener("click", hideDiscordOverlay);
+    </script>
+
+</body>
+</html>
+
+    </style>
+</head>
+<body>
+
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Music Playlist</title>
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+              text-align: center;
+          }
+          .player {
+              margin-top: 50px;
+          }
+          audio {
+              width: 80%;
+          }
+          .controls {
+              margin-top: 20px;
+          }
+          .control-btn {
+              margin: 5px;
+              padding: 10px;
+              cursor: pointer;
+              background-color: #4CAF50;
+              color: white;
+              border: none;
+              border-radius: 5px;
+          }
+          .control-btn:hover {
+              background-color: #45a049;
+          }
+      </style>
+  </head>
+  <body>
+  
+
+
+    <h1>My Music Playlist</h1>
+      
+    <div class="player">
+        <audio id="audioPlayer" controls>
+            <source id="audioSource" src="https://archive.org/download/TheNeighbourhoodSweaterWeather/The%20Neighbourhood%20-%20Sweater%20Weather.mp3" type="audio/mp3">
+            Your browser does not support the audio element.
+        </audio>
+        
+        <div class="controls">
+            <button class="control-btn" id="skipPrev">Previous</button>
+            <button class="control-btn" id="playPause">Pause</button>
+            <button class="control-btn" id="skipNext">Next</button>
+            <br><br>
+            <label for="volumeControl">Volume: </label>
+            <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="1">
+        </div>
+        
+        <div class="playlist">
+            <ul id="playlist">
+                <li data-src="https://archive.org/download/TheNeighbourhoodSweaterWeather/The%20Neighbourhood%20-%20Sweater%20Weather.mp3">Sweater Weather</li>
+                <li data-src="https://archive.org/download/ImagineDragonsBeliever_201706/Imagine%20Dragons%20-%20Believer.mp3">Believer - Imagine Dragons</li>
+                <li data-src="song2.mp3">Song 2</li>
+                <li data-src="song3.mp3">Song 3</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const audioPlayer = document.getElementById("audioPlayer");
+        const audioSource = document.getElementById("audioSource");
+        const playPauseButton = document.getElementById("playPause");
+        const skipPrevButton = document.getElementById("skipPrev");
+        const skipNextButton = document.getElementById("skipNext");
+        const volumeControl = document.getElementById("volumeControl");
+        const playlist = document.getElementById("playlist");
+        const playlistItems = playlist.getElementsByTagName("li");
+        
+        let currentSongIndex = 0;
+        
+        function loadSong(index) {
+            const song = playlistItems[index];
+            audioSource.src = song.getAttribute("data-src");
+            audioPlayer.load();
+            audioPlayer.play();
+        }
+        
+        playPauseButton.addEventListener("click", () => {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                playPauseButton.textContent = "Pause";
+            } else {
+                audioPlayer.pause();
+                playPauseButton.textContent = "Play";
+            }
+        });
+        
+        skipPrevButton.addEventListener("click", () => {
+            if (currentSongIndex > 0) {
+                currentSongIndex--;
+                loadSong(currentSongIndex);
+            }
+        });
+        
+        skipNextButton.addEventListener("click", () => {
+            if (currentSongIndex < playlistItems.length - 1) {
+                currentSongIndex++;
+                loadSong(currentSongIndex);
+            }
+        });
+        
+        volumeControl.addEventListener("input", () => {
+            audioPlayer.volume = volumeControl.value;
+        });
+        
+        // Playlist item click listener
+        for (let i = 0; i < playlistItems.length; i++) {
+            playlistItems[i].addEventListener("click", function () {
+                currentSongIndex = i;
+                loadSong(currentSongIndex);
+            });
+        }
+        
+        // Load the first song
+        loadSong(currentSongIndex);
     </script>
 
 </body>
