@@ -555,7 +555,7 @@
     // Destroy Page function
     function destroyPage() {
       // Remove all page content and display a restore message
-      document.body.innerHTML = "<h1 style='color:white;'>Page Destroyed</h1><button onclick='location.reload()' style='padding:10px 20px; font-size:16px;'>Restore Page</button>";
+      document.body.innerHTML = "<h1 style='color:white;'></h1><button onclick='location.reload()' style='padding:10px 20px; font-size:16px;'>Restore Page</button>";
     }
   </script>
 </body>
@@ -620,7 +620,7 @@
             hideDiscordOverlay();
         }
 
-        // Show the overlay every 25 seconds
+        // Show the overlay every 60 seconds
         setInterval(showDiscordOverlay, 60000);
 
         // Hide the overlay when clicking the button
@@ -668,12 +668,39 @@
           }
       </style>
   </head>
-  <body>
-  
+  <body>      
+    <style>
+      .player {
+          position: fixed;
+          top: 7.5%;
+          left: 5%;
+          transform: translateY(-50%);
+          background-color: rgba(0, 0, 0, 0.8);
+          padding: 10px;
+          border-radius: 10px;
+          color: white;
+          z-index: 1000;
+          width: 350px;
+          font-size: 12px;
+      }
+      .player h1 {
+          font-size: 14px;
+      }
+      .player audio {
+          width: 100%;
+      }
+      .control-btn {
+          padding: 5px;
+          font-size: 10px;
+      }
+      .playlist ul {
+          padding: 0;
+          list-style-type: none;
+          font-size: 10px;
+      }
+    </style>
+    
 
-
-    <h1>My Music Playlist</h1>
-      
     <div class="player">
         <audio id="audioPlayer" controls>
             <source id="audioSource" src="https://archive.org/download/TheNeighbourhoodSweaterWeather/The%20Neighbourhood%20-%20Sweater%20Weather.mp3" type="audio/mp3">
@@ -691,10 +718,10 @@
         
         <div class="playlist">
             <ul id="playlist">
-                <li data-src="https://archive.org/download/TheNeighbourhoodSweaterWeather/The%20Neighbourhood%20-%20Sweater%20Weather.mp3">Sweater Weather</li>
+                <li data-src="https://archive.org/download/TheNeighbourhoodSweaterWeather/The%20Neighbourhood%20-%20Sweater%20Weather.mp3">Sweater Weather - The Neighbourhood</li>
                 <li data-src="https://archive.org/download/ImagineDragonsBeliever_201706/Imagine%20Dragons%20-%20Believer.mp3">Believer - Imagine Dragons</li>
-                <li data-src="song2.mp3">Song 2</li>
-                <li data-src="song3.mp3">Song 3</li>
+                <li data-src="https://archive.org/download/20200308_20200308_1233/%282014%29%2006%20Angel.mp3">Angel - Theory Of A Deadman</li>
+                <li data-src="https://archive.org/download/juicewrldunreleased/Cigarettes.mp3">Cigaretts - Juice WRLD</li>
             </ul>
         </div>
     </div>
@@ -760,3 +787,32 @@
 
 </body>
 </html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Logs</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .update-logs {
+            position: absolute;
+            right: 20px;
+            top: 40px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="update-logs">
+        <h2>Update Logs</h2>
+        <div>
+            <div>Version 2.5</div>
+            <div>March 21, 2025</div>
+            <div>- Added more music <br>-</div>
+        </div>UI Improved <br>-</div>
+        <div>
