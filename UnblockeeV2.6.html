@@ -3,810 +3,526 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Unblocker</title>
+  <title>Unblockee</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
   <style>
-    /* Global Styles */
+    :root {
+      --bg-color: #ffffff;
+      --ui-bg: rgba(255, 255, 255, 0.9);
+      --btn-text: #000;
+    }
+
+    body.dark-mode {
+      --bg-color: #121212;
+      --ui-bg: rgba(0, 0, 0, 0.8);
+      --btn-text: #fff;
+    }
+
     body {
       margin: 0;
       overflow: hidden;
-      background: black;
-      color: white;
-      text-align: center;
-      transition: background 0.3s, color 0.3s;
-    }
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-    /* Header and Button Styles */
-    .navigate-button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 20px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-    }
-    .navigate-button-small {
-      padding: 3px 6px;
-      font-size: 12px;
-      margin: 5px;
-      cursor: pointer;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-    }
-    /* Adjust main content wrapper to align elements */
-.content {
-  position: absolute;
-  top: -175px; /* Moves it closer to Doge V4 */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1;
-  width: 100%;
-}
-
-    /* Main Content Wrapper */
-    #mainContentWrapper {
-      /* Contains top header, particle animation, etc. */
-    }
-    /* Particle Content Styles */
-    .content {
-      position: relative;
-      z-index: 1;
-      margin-top: 50px;
-    }
-    .controls {
-      position: relative;
-      z-index: 1;
-      margin-top: 20px;
-    }
-    .color-mode-container {
+      font-family: 'Orbitron', sans-serif;
+      transition: background 0.5s ease;
+      background: var(--bg-color);
       display: flex;
-      align-items: center;
       justify-content: center;
-      gap: 10px;
-      margin-top: 10px;
+      align-items: center;
     }
-    .template-container {
-      margin-top: 10px;
-    }
-    .template-container button {
-      padding: 5px 10px;
-      font-size: 14px;
-      margin: 0 5px;
-      cursor: pointer;
-      border: none;
-      border-radius: 3px;
-      background-color: #555;
-      color: white;
-    }
-    .toggle-mode {
-      padding: 5px 10px;
-      border: none;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    /* Calculator Styles */
-    #calculator {
+
+    #ui {
       position: fixed;
-      bottom: 10px;
-      right: 10px;
-      background: white;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 240px;
+      background-color: var(--ui-bg);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-      text-align: center;
-      display: none;
-      color: black;
+      z-index: 10;
     }
-    #calculator input {
-      width: 100%;
-      font-size: 20px;
-      margin-bottom: 10px;
-      text-align: right;
-    }
-    #calculator button {
-      font-size: 18px;
-      padding: 10px;
-      margin: 5px;
-      width: 23%;
+
+    .btn {
+      margin: 10px;
+      padding: 12px 20px;
       cursor: pointer;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      color: var(--btn-text);
+      border: none;
+      border-radius: 8px;
+      text-align: center;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      width: 100%;
     }
-    /* MISC Buttons Container (Initially hidden) */
-    #miscButtons {
-      display: none; /* Hidden by default */
+
+    .btn:hover {
+      background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+      transform: scale(1.05);
+    }
+
+    #styleSelector {
+      margin: 10px;
+      padding: 10px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 2px solid #ccc;
+      width: 100%;
+      cursor: pointer;
+      background-color: white;
+      color: black;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    #styleSelector:focus {
+      border-color: #7e57c2;
+    }
+
+    #mainButtons {
       position: fixed;
-      bottom: 10px;
-      left: 10px;
-      z-index: 5;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: none;
       flex-direction: column;
-      gap: 5px;
+      align-items: center;
+      z-index: 1;
     }
-    /* Miscellaneous Toggle Button Style */
-    #miscToggleBtn {
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    /* Banner styles */
+    #discordBanner {
       position: fixed;
       top: 10px;
-      right: 10px;
-      z-index: 1000;
-      padding: 8px 16px;
-      font-size: 14px;
-    }
-    /* Developer Area Styles */
-    #devArea {
-      display: none;
-      position: fixed;
-      top: 80px;
-      left: 20px;
-      background: rgba(0, 0, 0, 0.8);
-      padding: 10px;
-      border-radius: 5px;
+      left: 100%;
+      white-space: nowrap;
       color: white;
+      padding: 10px 20px;
+      font-weight: bold;
+      font-size: 18px;
+      border-radius: 20px;
+      cursor: pointer;
       z-index: 20;
-      text-align: left;
+      user-select: none;
+      box-shadow: 0 0 10px currentColor;
+      animation: slideLeft 10s linear infinite;
+      background: #7289da;
     }
+
+    @keyframes slideLeft {
+      0% {
+        left: 100%;
+      }
+      100% {
+        left: -100%;
+      }
+    }
+
+    /* Extras buttons container */
+    #extrasButtons {
+      position: fixed;
+      top: 60%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      z-index: 15;
+      background: var(--ui-bg);
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      width: 260px;
+    }
+
+    /* Game container */
+    #gameContainer {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 15;
+      background: var(--ui-bg);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      max-width: 350px;
+      min-width: 320px;
+      user-select: none;
+    }
+
+    /* TicTacToe board styling */
+    #ticTacToeContainer {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      justify-content: center;
+    }
+    #resetTicTacToeBtn {
+      padding: 10px 15px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 16px;
+      user-select: none;
+      height: 120px;
+      flex-shrink: 0;
+    }
+    #resetTicTacToeBtn:hover {
+      background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+      transform: scale(1.05);
+    }
+
+    #ticTacToe {
+      display: grid;
+      grid-template-columns: repeat(3, 80px);
+      grid-template-rows: repeat(3, 80px);
+      gap: 8px;
+      user-select: none;
+    }
+    #ticTacToe div {
+      background: #fafafa;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 50px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 0 5px #aaa;
+      user-select: none;
+    }
+    #ticTacToe div:hover {
+      background: #e1e1e1;
+    }
+
+/* Chess container (placeholder) */
+#chessGame {
+  width: 220px;
+  height: 180px;
+  background: #222;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ccc;
+  font-family: monospace;
+  font-size: 18px;
+  user-select: none;
+  text-align: center;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
   </style>
 </head>
-<body>
-  <!-- Main Content (Always Visible) -->
-  <div id="mainContentWrapper">
-    <!-- Top Header and Navigation Buttons -->
-    <h1>Unblocker Apps</h1>
-    <div style="position: absolute; top:-50px; left: 10px; display: flex; flex-direction: column; align-items: flex-start; z-index: 1000; position: relative;">
-      <a href="https://dogestforvpsig.vercel.app/apps" target="_blank">
-          <button style="background-color: rgb(0, 0, 255); color: white; margin: 5px;">Apps DV4</button>
-      </a>
-  
-      <a href="https://dogestforvpsig.vercel.app/gms" target="_blank">
-          <button style="background-color: rgb(89, 89, 179); color: white; margin: 5px;">Games</button>
-      </a>
-  
-      <a href="https://dogestforvpsig.vercel.app/settings.html" target="_blank">
-          <button style="background-color: rgb(179, 89, 89); color: white; margin: 5px;">Settings</button>
-      </a>
-  
-      <a href="https://dogestforvpsig.vercel.app/" target="_blank">
-          <button style="background-color: rgb(0, 0, 255); color: white; margin: 5px;">Search</button>
-      </a>
-  </div>
-  
-  </div>
-  
-  </div>
-  
-  <div style="position: absolute; top: -45px; left: 10px; display: flex; flex-direction: column; align-items: flex-start; z-index: 1000; position: relative;">
-    <a href="https://nahfam.mooo.com/reading/" target="_blank">
-        <button style="background-color: rgb(0, 0, 255); color: white; margin: 5px;"> Frogie's</button>
-    </a>
+<body class="dark-mode">
+  <div id="ui">
+    <button class="btn" onclick="showMainButtons()">Links</button>
 
-    <a href="https://nahfam.mooo.com/math/index.html" target="_blank">
-        <button style="background-color: rgb(89, 89, 179); color: white; margin: 5px;">Games</button>
-    </a>
+    <select id="styleSelector" title="Select a style">
+      <option value="" disabled selected>Choose Style</option>
+      <option value="Default">Default</option>
+      <option value="Chills">Chills</option>
+      <option value="HotMagma">HotMagma</option>
+      <option value="BioWaves">BioWaves</option>
+      <option value="Vortext">Vortext</option>
+    </select>
 
-    <a href="https://nahfam.mooo.com/settings.html" target="_blank">
-        <button style="background-color: rgb(179, 89, 89); color: white; margin: 5px;">Settings</button>
-    </a>
-
-    <a href="https://nahfam.mooo.com/" target="_blank">
-        <button style="background-color: rgb(0, 0, 255); color: white; margin: 5px;">Search</button>
-    </a>
-
+    <button class="btn" onclick="toggleMode()">Dark/Light Mode</button>
+    <button class="btn" onclick="hideMainButtons()">Hide UI</button>
+    <button class="btn" onclick="cloak()">Cloak</button>
+    <button class="btn" id="extrasBtn">Extras</button>
+    <button class="btn" onclick="panicKey()">Panic Key</button>
   </div>
 
-</div>
-
-</div>
-  
-    <!-- Main Particle Animation and Interactive Section -->
-    <div id="mainContent">
-      <canvas id="particleCanvas"></canvas>
-      <div class="content">
-        <h1 id="title">Original Title</h1>
-        <textarea id="titleInput" style="width: 300px; height: 100px;" placeholder="Type here to change the title..."></textarea>
-        <div class="controls">
-          <label for="particleSlider">Particles: </label>
-          <input type="range" id="particleSlider" min="10" max="500" value="100" />
-          <label for="sizeSlider">Size: </label>
-          <input type="range" id="sizeSlider" min="1" max="10" value="3" />
-          <div class="color-mode-container">
-            <label for="colorPicker">Color: </label>
-            <input type="color" id="colorPicker" value="#ffffff" />
-            <button id="toggleMode" class="toggle-mode">Light Mode</button>
-          </div>
-          <!-- Template Buttons -->
-          <div class="template-container">
-            <span>Templates:</span>
-            <button onclick="setTemplate('warm')">Warm</button>
-            <button onclick="setTemplate('cold')">Cold</button>
-            <button onclick="setTemplate('pastel')">Pastel</button>
-            <button onclick="setTemplate(null)">Default</button>
-          </div>
-          <!-- Particle Shape Buttons -->
-          <div class="template-container">
-            <span>Particle Shapes:</span>
-            <button onclick="setParticleShape('circle')">Circle</button>
-            <button onclick="setParticleShape('square')">Square</button>
-            <button onclick="setParticleShape('triangle')">Triangle</button>
-            <button onclick="setParticleShape('star')">Star</button>
-          </div>
-        </div>
-        <button class="navigate-button" onclick="hideEverything()">Hide Particles</button>
-      </div>
-    </div>
-    <!-- Back Container for Particle Section -->
-    <div id="backContainer" style="display: none; text-align: center; margin-top: 50px;">
-      <button id="backButton" class="navigate-button" onclick="showEverything()">Show Particles</button>
-    </div>
+  <div id="mainButtons">
+    <a class="btn" href="https://doge-fork-bice.vercel.app/settings.html" target="_blank">Doge|V4</a>
+    <a class="btn" href="https://nahfam.mooo.com/settings.html" target="_blank">Frogie's Arcade</a>
   </div>
 
-  <!-- MISC Buttons (Calculator, Favicon, Developer Only, Destroy Page) -->
-  <div id="miscButtons">
-    <button id="panicButton" class="navigate-button-small" onclick="toggleCalculator()">Calculator Button</button>
-    <button id="faviconButton" class="navigate-button-small" onclick="changeFavicon()">Change Favicon</button>
-    <button id="devButton" class="navigate-button-small" onclick="showDevArea()">Developer Only</button>
-    <button id="destroyButton" class="navigate-button-small" onclick="destroyPage()">Destroy Page</button>
-    <div id="calculatorContainer"></div>
+  <div id="extrasButtons">
+    <button class="btn" id="ticTacToeBtn">Tic-tac-toe</button>
+    <button class="btn" id="chessBtn">Chess Game</button>
   </div>
 
-  <!-- Miscellaneous Toggle Button (Always Visible) -->
-  <button id="miscToggleBtn" class="navigate-button-small" onclick="toggleMiscButtons()">Miscellaneous</button>
+  <div id="gameContainer"></div>
 
-  <!-- Developer Area (Hidden by default) -->
-  <div id="devArea">
-    <h3>Developer Info</h3>
-    <p id="fpsInfo">FPS: Calculating...</p>
-    <p id="memoryInfo">Memory: Calculating...</p>
-    <button class="navigate-button-small" onclick="applyDeveloperSkin()">Apply Developer Skin</button>
-    <button class="navigate-button-small" onclick="hideDevArea()">Close Developer Area</button>
+  <div id="discordBanner" onclick="window.open('https://discord.gg/QUW5UWhAr6', '_blank')">
+    Join the Unblockee Discord Server!
   </div>
 
-  <!-- Particle Animation Script -->
+  <canvas id="particles"></canvas>
+
   <script>
-    // Update title on textarea input
-    document.getElementById("titleInput").addEventListener("input", function(event) {
-      const newTitle = event.target.value;
-      document.title = newTitle;
-      document.getElementById("title").textContent = newTitle;
-    });
-    // Canvas setup
-    const canvas = document.getElementById("particleCanvas");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
     let particles = [];
-    let numParticles = 100;
-    let particleSize = 3; // Default particle size
-    let particleColor = "#ffffff";
-    let isDarkMode = true;
-    let particleShape = "circle"; // Default particle shape
+    let styleType = 'default';
+    const banner = document.getElementById('discordBanner');
+    const styleSelector = document.getElementById('styleSelector');
 
-    let activeTemplate = null;
-    const templateColors = {
-      warm: ["#FF5733", "#FFC300", "#FF8D1A", "#FF6F61"],
-      cold: ["#33C1FF", "#335BFF", "#33FFBD", "#2D9CDB"],
-      pastel: ["#FFB3BA", "#FFDFBA", "#FFFFBA", "#BAFFC9", "#BAE1FF"]
-    };
-    const templateBackgrounds = {
-      warm: "#FFEBE5",
-      cold: "#E0F7FF",
-      pastel: "#6E6E8F"
-    };
-    class Particle {
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = particleSize;
-        this.speedX = Math.random() * 2 - 1;
-        this.speedY = Math.random() * 2 - 1;
-      }
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-      }
-      draw() {
-        let drawColor = particleColor;
-        if (activeTemplate && templateColors[activeTemplate]) {
-          const colors = templateColors[activeTemplate];
-          drawColor = colors[Math.floor(Math.random() * colors.length)];
-        }
-        ctx.fillStyle = drawColor;
-        ctx.beginPath();
-        if (particleShape === "square") {
-          ctx.fillRect(this.x, this.y, this.size, this.size);
-        } else if (particleShape === "triangle") {
-          ctx.moveTo(this.x, this.y);
-          ctx.lineTo(this.x + this.size, this.y + this.size);
-          ctx.lineTo(this.x - this.size, this.y + this.size);
-          ctx.closePath();
-        } else if (particleShape === "star") {
-          ctx.moveTo(this.x, this.y - this.size);
-          for (let i = 0; i < 5; i++) {
-            const angle = (i * 144) * (Math.PI / 180);
-            const x = this.x + this.size * Math.sin(angle);
-            const y = this.y - this.size * Math.cos(angle);
-            ctx.lineTo(x, y);
-          }
-          ctx.closePath();
-        } else {
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        }
-        ctx.fill();
-      }
-    }
-
-    function initParticles() {
-      particles = [];
-      for (let i = 0; i < numParticles; i++) {
-        particles.push(new Particle());
-      }
-    }
-
-    function animateParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(particle => {
-        particle.update();
-        particle.draw();
-      });
-      requestAnimationFrame(animateParticles);
-    }
-
-    document.getElementById("particleSlider").addEventListener("input", function(event) {
-      numParticles = event.target.value;
-      initParticles();
-    });
-
-    document.getElementById("sizeSlider").addEventListener("input", function(event) {
-      particleSize = event.target.value;
-      particles.forEach(particle => {
-        particle.size = particleSize;
-      });
-    });
-
-    document.getElementById("colorPicker").addEventListener("input", function(event) {
-      activeTemplate = null;
-      particleColor = event.target.value;
-      document.body.style.background = isDarkMode ? "black" : "white";
-    });
-
-    document.getElementById("toggleMode").addEventListener("click", function() {
-      isDarkMode = !isDarkMode;
-      if (isDarkMode) {
-        if (!activeTemplate) document.body.style.background = "black";
-        document.body.style.color = "white";
-        this.textContent = "Light Mode";
-        if (!activeTemplate) particleColor = "#ffffff";
-      } else {
-        if (!activeTemplate) document.body.style.background = "white";
-        document.body.style.color = "black";
-        this.textContent = "Dark Mode";
-        if (!activeTemplate) particleColor = "#000000";
-      }
-    });
-
-    function setTemplate(template) {
-      activeTemplate = template;
-      if (activeTemplate && templateBackgrounds[activeTemplate]) {
-        document.body.style.background = templateBackgrounds[activeTemplate];
-      } else {
-        document.body.style.background = isDarkMode ? "black" : "white";
-      }
-    }
-
-    function setParticleShape(shape) {
-      particleShape = shape;
-      initParticles();
-    }
-
-    window.addEventListener("resize", () => {
+    function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      initParticles();
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    styleSelector.addEventListener('change', () => {
+      const selectedStyle = styleSelector.value;
+      applyStyle(selectedStyle);
     });
 
-    initParticles();
-    animateParticles();
-
-    function hideEverything() {
-      document.getElementById("mainContent").style.display = "none";
-      document.getElementById("backContainer").style.display = "block";
+    function showMainButtons() {
+      document.getElementById('mainButtons').style.display = 'flex';
     }
 
-    function showEverything() {
-      document.getElementById("mainContent").style.display = "block";
-      document.getElementById("backContainer").style.display = "none";
+    function hideMainButtons() {
+      document.getElementById('mainButtons').style.display = 'none';
     }
-  </script>
 
-  <!-- Calculator and Favicon Scripts -->
-  <script>
-    function toggleCalculator() {
-      let calculatorDiv = document.getElementById("calculator");
-      let panicButton = document.getElementById("panicButton");
-      
-      if (!calculatorDiv) {
-        calculatorDiv = document.createElement("div");
-        calculatorDiv.id = "calculator";
-        calculatorDiv.innerHTML = `
-          <input type="text" id="calcDisplay" disabled>
-          <br>
-          <button onclick="clearDisplay()">C</button>
-          <button onclick="addToDisplay('1')">1</button>
-          <button onclick="addToDisplay('2')">2</button>
-          <button onclick="addToDisplay('+')">+</button>
-          <br>
-          <button onclick="addToDisplay('3')">3</button>
-          <button onclick="addToDisplay('4')">4</button>
-          <button onclick="addToDisplay('5')">5</button>
-          <button onclick="addToDisplay('-')">-</button>
-          <br>
-          <button onclick="addToDisplay('6')">6</button>
-          <button onclick="addToDisplay('7')">7</button>
-          <button onclick="addToDisplay('8')">8</button>
-          <button onclick="addToDisplay('*')">X</button>
-          <br>
-          <button onclick="addToDisplay('9')">9</button>
-          <button onclick="addToDisplay('0')">0</button>
-          <button onclick="calculateResult()">=</button>
-          <button onclick="addToDisplay('/')">/</button>
-          <br>
-        `;
-        document.getElementById("calculatorContainer").appendChild(calculatorDiv);
+    function applyStyle(style) {
+      styleType = style;
+      switch (style) {
+        case 'Default':
+          document.body.style.background = 'var(--bg-color)';
+          particles = [];
+          setBannerColor('#7289da'); // default discord blue
+          break;
+        case 'Chills':
+          document.body.style.background = '#aee1f9';
+          createParticles('snow');
+          setBannerColor('#000033'); // dark dark blue
+          break;
+        case 'HotMagma':
+          document.body.style.background = '#ff5722';
+          createParticles('fire');
+          setBannerColor('#ff4500'); // hot orange
+          break;
+        case 'BioWaves':
+          document.body.style.background = '#4caf50';
+          createParticles('bubbles');
+          setBannerColor('#f7f48b'); // yellow tint
+          break;
+        case 'Vortext':
+          document.body.style.background = '#7e57c2';
+          createParticles('cubes');
+          setBannerColor('#6a0dad'); // purple granite
+          break;
+        default:
+          alert('Invalid style');
+          setBannerColor('#7289da');
       }
-      
-      if (calculatorDiv.style.display === "none" || calculatorDiv.style.display === "") {
-        calculatorDiv.style.display = "block";
-        panicButton.textContent = "Restore View";
+    }
+
+    function setBannerColor(color) {
+      banner.style.backgroundColor = color;
+      banner.style.boxShadow = `0 0 10px ${color}`;
+    }
+
+    function createParticles(type) {
+      particles = [];
+      for (let i = 0; i < 100; i++) {
+        let dx = (Math.random() - 0.5) * 2;
+        let dy = (Math.random() - 0.5) * 2;
+
+        if (type === 'cubes') {
+          dx *= 4;
+          dy *= 4;
+        }
+
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          dx: dx,
+          dy: dy,
+          size: Math.random() * 5 + 2,
+          type
+        });
+      }
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const p of particles) {
+        ctx.beginPath();
+        switch (p.type) {
+          case 'snow':
+            ctx.fillStyle = 'white';
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            break;
+          case 'fire':
+            ctx.fillStyle = 'red';
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            break;
+          case 'bubbles':
+            ctx.fillStyle = 'rgba(255, 255, 150, 0.9)';
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            break;
+          case 'cubes':
+            ctx.fillStyle = 'rgba(200, 100, 255, 0.7)';
+            ctx.fillRect(p.x, p.y, p.size, p.size);
+            break;
+        }
+        ctx.fill();
+
+        p.x += p.dx;
+        p.y += p.dy;
+
+        if (p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) {
+          p.x = Math.random() * canvas.width;
+          p.y = Math.random() * canvas.height;
+        }
+      }
+    }
+
+    function toggleMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+    function cloak() {
+      const newName = prompt("What do you want to rename this tab to?");
+      if (newName) document.title = newName;
+
+      const iconChoice = 'google'; // Only Google icon for now
+      if (iconChoice === 'google') {
+        const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+        link.type = 'image/x-icon';
+        link.rel = 'shortcut icon';
+        link.href = 'https://ssl.gstatic.com/classroom/favicon.png';
+        document.getElementsByTagName('head')[0].appendChild(link);
+      }
+    }
+
+    function panicKey() {
+      window.location.href = 'https://www.google.com';
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (styleType !== 'Default') drawParticles();
+      else ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    animate();
+
+    // Initialize default style on load
+    applyStyle('Default');
+
+    // Extras button toggle
+    const extrasBtn = document.getElementById('extrasBtn');
+    const extrasButtons = document.getElementById('extrasButtons');
+    const mainButtons = document.getElementById('mainButtons');
+    const gameContainer = document.getElementById('gameContainer');
+
+    extrasBtn.addEventListener('click', () => {
+      if (extrasButtons.style.display === 'flex') {
+        extrasButtons.style.display = 'none';
+        gameContainer.innerHTML = '';
+        // Show mainButtons if hidden
+        mainButtons.style.display = 'flex';
       } else {
-        calculatorDiv.style.display = "none";
-        panicButton.textContent = "Calculator Button";
+        extrasButtons.style.display = 'flex';
+        gameContainer.innerHTML = '';
+        // Hide mainButtons if visible
+        mainButtons.style.display = 'none';
       }
-    }
-    
-    function addToDisplay(value) {
-      document.getElementById("calcDisplay").value += value;
-    }
-    
-    function clearDisplay() {
-      document.getElementById("calcDisplay").value = "";
-    }
-    
-    function calculateResult() {
-      try {
-        let input = document.getElementById("calcDisplay").value;
-        let result = eval(input);
-        document.getElementById("calcDisplay").value = result;
-      } catch {
-        document.getElementById("calcDisplay").value = "Error";
-      }
-    }
-    
-    function changeFavicon() {
-      let choice = prompt("Choose a favicon: Type 'classroom' for Google Classroom, 'google' for Google, or 'globe' for Blank page");
-      let faviconURL = "";
-      
-      if (choice === "classroom") {
-        faviconURL = "https://www.gstatic.com/classroom/favicon.png";
-      } else if (choice === "google") {
-        faviconURL = "https://www.google.com/favicon.ico";
-      } else if (choice === "globe") {
-        faviconURL = "https://upload.wikimedia.org/wikipedia/commons/8/89/Globe_icon_gray.png";
-      } else {
-        alert("Invalid choice. Please type 'classroom', 'google', or 'globe'.");
-        return;
-      }
-      
-      let favicon = document.querySelector("link[rel='icon']") || document.createElement("link");
-      favicon.rel = "icon";
-      favicon.href = faviconURL;
-      document.head.appendChild(favicon);
-    }
-    
-    function toggleMiscButtons() {
-      const miscContainer = document.getElementById("miscButtons");
-      const toggleBtn = document.getElementById("miscToggleBtn");
-      if (miscContainer.style.display === "none" || miscContainer.style.display === "") {
-        miscContainer.style.display = "flex";
-        toggleBtn.textContent = "Hide Miscellaneous";
-      } else {
-        miscContainer.style.display = "none";
-        toggleBtn.textContent = "Show Miscellaneous";
-      }
-    }
-  </script>
+    });
 
-<head>
-  <style>
-    #devArea {
-      position: absolute;
-      top: 69%;  /* Center vertically */
-      left: 5px; /* Keep it near the left */
-      transform: translateY(-50%); /* Adjust for perfect centering */
-      background: rgba(0, 0, 0, 0.8); /* Optional: Makes it more visible */
-      color: white; /* Optional: Better contrast */
-      padding: 10px;
-      border-radius: 5px;
-    }
-  </style>
-</head>
+    // Tic Tac Toe game setup
+    const ticTacToeBtn = document.getElementById('ticTacToeBtn');
+    const chessBtn = document.getElementById('chessBtn');
 
-
-  <!-- Developer & Destroy Functions -->
-  <script>
-    // Developer Only Page functions
-    function showDevArea() {
-      const password = prompt("Enter developer password:");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if (password === "$NS143") {
-        document.getElementById("devArea").style.display = "block";
-        startDevInfo();
-      } else {
-        alert("Incorrect password!");
-      }
-    }
-
-    function hideDevArea() {
-      document.getElementById("devArea").style.display = "none";
-    }
-
-    function startDevInfo() {
-      // Simulate FPS update every second
-      setInterval(() => {
-        document.getElementById("fpsInfo").textContent = "FPS: " + (Math.random() * 60).toFixed(2);
-      }, 1000);
-      // Update memory usage if available (else show N/A)
-      setInterval(() => {
-        let mem = (window.performance && window.performance.memory)
-          ? Math.round(window.performance.memory.usedJSHeapSize / 1048576)
-          : "N/A";
-        document.getElementById("memoryInfo").textContent = "Memory: " + mem + " MB";
-      }, 1000);
-    }
-
-    function applyDeveloperSkin() {
-      // Apply a cool gradient background for developers
-      document.body.style.background = "linear-gradient(135deg, #6a11cb, #2575fc)";
-    }
-
-    // Destroy Page function
-    function destroyPage() {
-      // Remove all page content and display a restore message
-      document.body.innerHTML = "<h1 style='color:white;'></h1><button onclick='location.reload()' style='padding:10px 20px; font-size:16px;'>Restore Page</button>";
-    }
-  </script>
-</body>
-</html>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unblockee Discord Alert</title>
-    <style>
-        /* Overlay styling */
-        #discord-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Button styling */
-        #discord-button {
-            background-color: #5865F2;
-            color: white;
-            font-size: 20px;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
-        }
-
-        #discord-button:hover {
-            background-color: #4752C4;
-        }
-    </style>
-</head>
-<body>
-
-    <!-- Overlay -->
-    <div id="discord-overlay">
-        <button id="discord-button" onclick="joinDiscord()">Join the Unblockee Discord</button>
-    </div>
-
-    <script>
-        function showDiscordOverlay() {
-            document.getElementById("discord-overlay").style.display = "flex";
-        }
-
-        function hideDiscordOverlay() {
-            document.getElementById("discord-overlay").style.display = "none";
-        }
-
-        function joinDiscord() {
-            window.open("https://discord.gg/ZrUAKGAGXk", "_blank");
-            hideDiscordOverlay();
-        }
-
-        // Show the overlay every 60 seconds
-        setInterval(showDiscordOverlay, 60000);
-
-        // Hide the overlay when clicking the button
-        document.getElementById("discord-overlay").addEventListener("click", hideDiscordOverlay);
-    </script>
-
-</body>
-</html>
-
-    </style>
-</head>
-<body>
-
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Music Playlist</title>
-      <style>
-          body {
-              font-family: Arial, sans-serif;
-              text-align: center;
-          }
-          .player {
-              margin-top: 50px;
-          }
-          audio {
-              width: 80%;
-          }
-          .controls {
-              margin-top: 20px;
-          }
-          .control-btn {
-              margin: 5px;
-              padding: 10px;
-              cursor: pointer;
-              background-color: #4CAF50;
-              color: white;
-              border: none;
-              border-radius: 5px;
-          }
-          .control-btn:hover {
-              background-color: #45a049;
-          }
-      </style>
-  </head>
-  <body>      
-    <style>
-      .player {
-          position: fixed;
-          top: 7.5%;
-          left: 5%;
-          transform: translateY(-50%);
-          background-color: rgba(0, 0, 0, 0.8);
-          padding: 10px;
-          border-radius: 10px;
-          color: white;
-          z-index: 1000;
-          width: 350px;
-          font-size: 12px;
-      }
-      .player h1 {
-          font-size: 14px;
-      }
-      .player audio {
-          width: 55%;
-      }
-      .control-btn {
-          padding: px;
-          font-size: 10px;
-      }
-      .playlist ul {
-          padding: 0;
-          list-style-type: none;
-          font-size: 10px;
-      }
-    </style>
-    
-
-    <div class="player">
-        <audio id="audioPlayer" controls>
-            <source id="audioSource" src="https://archive.org/download/TheNeighbourhoodSweaterWeather/The%20Neighbourhood%20-%20Sweater%20Weather.mp3" type="audio/mp3">
-            Your browser does not support the audio element.
-        </audio>
-        
-        <div class="controls">
-            <button class="control-btn" id="skipPrev">Previous</button>
-            <button class="control-btn" id="playPause">Pause</button>
-            <button class="control-btn" id="skipNext">Next</button>
-            <br><br>
-            <label for="volumeControl">Volume: </label>
-            <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="1">
+    ticTacToeBtn.addEventListener('click', () => {
+      gameContainer.innerHTML = `
+        <div id="ticTacToeContainer">
+          <button id="resetTicTacToeBtn">Reset</button>
+          <div id="ticTacToe">
+            <div data-cell></div><div data-cell></div><div data-cell></div>
+            <div data-cell></div><div data-cell></div><div data-cell></div>
+            <div data-cell></div><div data-cell></div><div data-cell></div>
+          </div>
         </div>
-        
-        <div class="playlist">
-            <ul id="playlist">
-                <li data-src="https://archive.org/download/TheNeighbourhoodSweaterWeather/The%20Neighbourhood%20-%20Sweater%20Weather.mp3">Sweater Weather - The Neighbourhood</li>
-                <li data-src="https://archive.org/download/ImagineDragonsBeliever_201706/Imagine%20Dragons%20-%20Believer.mp3">Believer - Imagine Dragons</li>
-                <li data-src="https://archive.org/download/20200308_20200308_1233/%282014%29%2006%20Angel.mp3">Angel - Theory Of A Deadman</li>
-                <li data-src="https://archive.org/download/juicewrldunreleased/Cigarettes.mp3">Cigaretts - Juice WRLD</li>
-            </ul>
-        </div>
-    </div>
+      `;
+      startTicTacToe();
 
-    <script>
-        const audioPlayer = document.getElementById("audioPlayer");
-        const audioSource = document.getElementById("audioSource");
-        const playPauseButton = document.getElementById("playPause");
-        const skipPrevButton = document.getElementById("skipPrev");
-        const skipNextButton = document.getElementById("skipNext");
-        const volumeControl = document.getElementById("volumeControl");
-        const playlist = document.getElementById("playlist");
-        const playlistItems = playlist.getElementsByTagName("li");
-        
-        let currentSongIndex = 0;
-        
-        function loadSong(index) {
-            const song = playlistItems[index];
-            audioSource.src = song.getAttribute("data-src");
-            audioPlayer.load();
-            audioPlayer.play();
-        }
-        
-        playPauseButton.addEventListener("click", () => {
-            if (audioPlayer.paused) {
-                audioPlayer.play();
-                playPauseButton.textContent = "Pause";
-            } else {
-                audioPlayer.pause();
-                playPauseButton.textContent = "Play";
-            }
-        });
-        
-        skipPrevButton.addEventListener("click", () => {
-            if (currentSongIndex > 0) {
-                currentSongIndex--;
-                loadSong(currentSongIndex);
-            }
-        });
-        
-        skipNextButton.addEventListener("click", () => {
-            if (currentSongIndex < playlistItems.length - 1) {
-                currentSongIndex++;
-                loadSong(currentSongIndex);
-            }
-        });
-        
-        volumeControl.addEventListener("input", () => {
-            audioPlayer.volume = volumeControl.value;
-        });
-        
-        // Playlist item click listener
-        for (let i = 0; i < playlistItems.length; i++) {
-            playlistItems[i].addEventListener("click", function () {
-                currentSongIndex = i;
-                loadSong(currentSongIndex);
-            });
-        }
-        
-        // Load the first song
-        loadSong(currentSongIndex);
-    </script>
+      // Reset button listener
+      document.getElementById('resetTicTacToeBtn').addEventListener('click', resetTicTacToe);
+    });
 
+    chessBtn.addEventListener('click', () => {
+      gameContainer.innerHTML = `
+        <div id="chessGame">Embedded chess game coming soon...</div>
+      `;
+    });
+
+    let currentTurn, boardCells, boardState;
+
+    function startTicTacToe() {
+      const X = "X";
+      const O = "O";
+      currentTurn = X;
+      boardCells = document.querySelectorAll("#ticTacToe div");
+      boardState = Array(9).fill(null);
+
+      boardCells.forEach(cell => cell.textContent = "");
+
+      boardCells.forEach((cell, idx) => {
+        cell.onclick = () => {
+          if (cell.textContent !== "" || checkWinner(boardState) || checkDraw(boardState)) return;
+
+          cell.textContent = currentTurn;
+          boardState[idx] = currentTurn;
+
+          if (checkWinner(boardState)) {
+            setTimeout(() => alert(currentTurn + " wins!"), 100);
+          } else if (checkDraw(boardState)) {
+            setTimeout(() => alert("Draw!"), 100);
+          } else {
+            currentTurn = currentTurn === X ? O : X;
+          }
+        };
+      });
+    }
+
+    function resetTicTacToe() {
+      boardState.fill(null);
+      boardCells.forEach(cell => cell.textContent = "");
+      currentTurn = "X";
+    }
+
+    function checkWinner(b) {
+      const winPatterns = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+      return winPatterns.some(pattern => pattern.every(i => b[i] === currentTurn));
+    }
+
+    function checkDraw(b) {
+      return b.every(cell => cell !== null);
+    }
+  </script>
 </body>
 </html>
 
@@ -823,9 +539,9 @@
         }
         .update-logs {
             position: absolute;
-            right: 20px;
-            top: 40px;
-            text-align: right;
+            right: 2000px;
+            top: 45px;
+            text-align: center;
         }
     </style>
 </head>
@@ -833,8 +549,8 @@
     <div class="update-logs">
         <h2>Update Logs</h2>
         <div>
-            <div>Version 2.6</div>
-            <div> April 14th </div>
-            <div>- More Links <br>-</div>
-        </div>UI Hot fixes <br>-</div>
-        <div>
+            <div>Version 2.7 Beta</div>
+            <div>May 14th   </div>
+            <div>- Huge Revamp <br>-</div>
+        <div>UI Overhaul  <br>-</div>
+        </div>Page Redone!</div>
