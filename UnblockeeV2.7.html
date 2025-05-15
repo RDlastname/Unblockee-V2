@@ -554,3 +554,169 @@
             <div>- Huge Revamp <br>-</div>
         <div>UI Overhaul  <br>-</div>
         </div>Page Redone!</div>
+
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dev Mode + Jump Scare</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    #fpsOverlay {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background-color: rgba(0, 0, 0, 0.8);
+      font-family: monospace;
+      padding: 10px;
+      border-radius: 5px;
+      z-index: 9999;
+      display: none;
+    }
+
+    .normal {
+      color: lime;
+    }
+
+    .warning {
+      color: yellow;
+    }
+
+    .critical {
+      color: red;
+    }
+
+    #jumpscare {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: black;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: 10000;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="fpsOverlay">
+    <div id="fpsText">FPS: <span id="fps">0</span></div>
+    <div id="fpmText">FPM: <span id="fpm">0</span></div>
+  </div>
+
+  <div id="jumpscare"></div>
+
+  <audio id="scream" src="https://www.soundjay.com/human/sounds/scream-01.mp3" preload="auto"></audio>
+
+  <script>
+    let keyBuffer = '';
+    const activateCode = 'DEVMODE';
+    const deactivateCode = 'DEVOFF';
+    const scareCode = 'SCARE';
+    let isDevMode = false;
+    let animationFrameId = null;
+
+    document.addEventListener('keydown', (e) => {
+      keyBuffer += e.key;
+      keyBuffer = keyBuffer.slice(-10); // limit buffer size
+
+      const bufferUpper = keyBuffer.toUpperCase();
+
+      if (bufferUpper.endsWith(activateCode) && !isDevMode) {
+        enableDevMode();
+      }
+
+      if (bufferUpper.endsWith(deactivateCode) && isDevMode) {
+        disableDevMode();
+      }
+
+      if (bufferUpper.endsWith(scareCode)) {
+        triggerJumpScare();
+      }
+    });
+
+    function enableDevMode() {
+      isDevMode = true;
+      document.getElementById('fpsOverlay').style.display = 'block';
+      startFPSCounter();
+    }
+
+    function disableDevMode() {
+      isDevMode = false;
+      document.getElementById('fpsOverlay').style.display = 'none';
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+    }
+
+    function startFPSCounter() {
+      let fps = 0;
+      let lastTime = performance.now();
+      let frameCount = 0;
+
+      function update() {
+        if (!isDevMode) return;
+
+        const now = performance.now();
+        frameCount++;
+        const delta = now - lastTime;
+
+        if (delta >= 1000) {
+          fps = frameCount;
+          document.getElementById('fps').textContent = fps;
+          document.getElementById('fpm').textContent = fps * 60;
+
+          const fpsText = document.getElementById('fpsText');
+          const fpmText = document.getElementById('fpmText');
+          fpsText.className = '';
+          fpmText.className = '';
+
+          if (fps < 20) {
+            fpsText.classList.add('critical');
+            fpmText.classList.add('critical');
+          } else if (fps < 60) {
+            fpsText.classList.add('warning');
+            fpmText.classList.add('warning');
+          } else {
+            fpsText.classList.add('normal');
+            fpmText.classList.add('normal');
+          }
+
+          frameCount = 0;
+          lastTime = now;
+        }
+
+        animationFrameId = requestAnimationFrame(update);
+      }
+
+      animationFrameId = requestAnimationFrame(update);
+    }
+
+    function triggerJumpScare() {
+      const scream = document.getElementById('scream');
+      const scare = document.getElementById('jumpscare');
+
+      scare.style.display = 'allow';
+      scare.style.backgroundImage = "url('https://media.tenor.com/VYOoLqkBFsMAAAAd/jumpscare-gif.gif')";
+
+      scream.volume = 1.0;
+      scream.play().catch(() => {
+        alert("...&&#&$#&$*&#!*&478*.");
+      });
+
+      setTimeout(() => {
+        window.location.href = '';
+      }, 4000); // Wait 4 seconds before redirect
+    }
+  </script>
+</body>
+</html>
