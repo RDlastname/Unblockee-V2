@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Unblockee</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
   <style>
+
+
+    
     :root {
       --bg-color: #ffffff;
       --ui-bg: rgba(255, 255, 255, 0.9);
@@ -212,26 +216,8 @@
     #ticTacToe div:hover {
       background: #e1e1e1;
     }
-
-/* Chess container (placeholder) */
-#chessGame {
-  width: 220px;
-  height: 180px;
-  background: #222;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #ccc;
-  font-family: monospace;
-  font-size: 18px;
-  user-select: none;
-  text-align: center;
-  padding: 10px;
-  box-sizing: border-box;
-}
-
-  </style>
+    
+</style>
 </head>
 <body class="dark-mode">
   <div id="ui">
@@ -245,11 +231,12 @@
       <option value="BioWaves">BioWaves</option>
       <option value="Vortext">Vortext</option>
     </select>
-
+  
+    <button class="btn" onclick="saveSettings()">Save Settings</button>
     <button class="btn" onclick="toggleMode()">Dark/Light Mode</button>
     <button class="btn" onclick="hideMainButtons()">Hide UI</button>
     <button class="btn" onclick="cloak()">Cloak</button>
-    <button class="btn" id="extrasBtn">Extras</button>
+        <button class="btn" id="extrasBtn">Extras</button>
     <button class="btn" onclick="panicKey()">Panic Key</button>
   </div>
 
@@ -260,7 +247,6 @@
 
   <div id="extrasButtons">
     <button class="btn" id="ticTacToeBtn">Tic-tac-toe</button>
-    <button class="btn" id="chessBtn">Chess Game</button>
   </div>
 
   <div id="gameContainer"></div>
@@ -398,7 +384,13 @@
     function toggleMode() {
       document.body.classList.toggle('dark-mode');
     }
-
+    function saveSettings() {
+  const selectedStyle = styleSelector.value || 'Default';
+  const mode = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+  localStorage.setItem('selectedStyle', selectedStyle);
+  localStorage.setItem('themeMode', mode);
+  alert('Settings saved!');
+}
     function cloak() {
       const newName = prompt("What do you want to rename this tab to?");
       if (newName) document.title = newName;
@@ -417,6 +409,45 @@
       window.location.href = 'https://www.google.com';
     }
 
+    window.addEventListener('DOMContentLoaded', () => {
+  resizeCanvas(); // Ensure canvas size is correct
+
+  // Load cached dark/light mode
+  const savedMode = localStorage.getItem('themeMode');
+  if (savedMode === 'light') {
+    document.body.classList.remove('dark-mode');
+  } else {
+    document.body.classList.add('dark-mode'); // Default to dark
+  }
+
+  // Load cached selected style
+  const savedStyle = localStorage.getItem('selectedStyle');
+  if (savedStyle) {
+    styleSelector.value = savedStyle;
+    applyStyle(savedStyle);
+  } else {
+    applyStyle('Default'); // fallback style
+  }
+});
+
+const extrasBtn = document.getElementById('extrasBtn');
+const extrasButtons = document.getElementById('extrasButtons');
+const mainButtons = document.getElementById('mainButtons');
+const gameContainer = document.getElementById('gameContainer');
+
+extrasBtn.addEventListener('click', () => {
+  if (extrasButtons.style.display === 'flex') {
+    extrasButtons.style.display = 'none';
+    gameContainer.innerHTML = '';
+mainButtons.style.display = 'none'; //Weird Right now
+  } else {
+    extrasButtons.style.display = 'flex';
+    gameContainer.innerHTML = '';
+    mainButtons.style.display = 'none';
+  }
+});
+
+
     function animate() {
       requestAnimationFrame(animate);
       if (styleType !== 'Default') drawParticles();
@@ -425,32 +456,9 @@
 
     animate();
 
-    // Initialize default style on load
-    applyStyle('Default');
-
-    // Extras button toggle
-    const extrasBtn = document.getElementById('extrasBtn');
-    const extrasButtons = document.getElementById('extrasButtons');
-    const mainButtons = document.getElementById('mainButtons');
-    const gameContainer = document.getElementById('gameContainer');
-
-    extrasBtn.addEventListener('click', () => {
-      if (extrasButtons.style.display === 'flex') {
-        extrasButtons.style.display = 'none';
-        gameContainer.innerHTML = '';
-        // Show mainButtons if hidden
-        mainButtons.style.display = 'flex';
-      } else {
-        extrasButtons.style.display = 'flex';
-        gameContainer.innerHTML = '';
-        // Hide mainButtons if visible
-        mainButtons.style.display = 'none';
-      }
-    });
 
     // Tic Tac Toe game setup
     const ticTacToeBtn = document.getElementById('ticTacToeBtn');
-    const chessBtn = document.getElementById('chessBtn');
 
     ticTacToeBtn.addEventListener('click', () => {
       gameContainer.innerHTML = `
@@ -468,13 +476,6 @@
       // Reset button listener
       document.getElementById('resetTicTacToeBtn').addEventListener('click', resetTicTacToe);
     });
-
-    chessBtn.addEventListener('click', () => {
-      gameContainer.innerHTML = `
-        <div id="chessGame">Embedded chess game coming soon...</div>
-      `;
-    });
-
     let currentTurn, boardCells, boardState;
 
     function startTicTacToe() {
@@ -525,8 +526,6 @@
   </script>
 </body>
 </html>
-
-<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -539,8 +538,8 @@
         }
         .update-logs {
             position: absolute;
-            right: 2000px;
-            top: 45px;
+            right: 1650px;
+            top: 5px;
             text-align: center;
         }
     </style>
@@ -549,13 +548,12 @@
     <div class="update-logs">
         <h2>Update Logs</h2>
         <div>
-            <div>Version 2.7 Beta</div>
-            <div>May 14th   </div>
+          <div>Version 2.7 Beta</div>
+            <div>May 15th   </div>
             <div>- Huge Revamp <br>-</div>
         <div>UI Overhaul  <br>-</div>
-        </div>Page Redone!</div>
-
-        <!DOCTYPE html>
+        </div>Save Feature with Caches
+  </div>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -615,6 +613,301 @@
   <div id="jumpscare"></div>
 
   <audio id="scream" src="https://www.soundjay.com/human/sounds/scream-01.mp3" preload="auto"></audio>
+
+#Unblockee
+  <div id="adminPanel" style=" 
+  display:none;
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  width: 320px;
+  background: rgba(0,0,0,0.9);
+  color: white;
+  font-family: monospace;
+  padding: 15px;
+  border-radius: 8px;
+  z-index: 10000;
+  box-shadow: 0 0 10px #0f0;">
+  
+  <h3>Admin Panel</h3>
+
+  <div id="osInfo" style="margin-bottom: 10px;">OS: Detecting...</div>
+
+  <div id="fpsDisplay">FPS: 0</div>
+  <div id="fpmDisplay">FPM: 0</div>
+
+<button id="btnToggleDark" style="margin-top:10px;">Toggle Dark Mode</button>
+<button id="btnClearCache" style="margin-top:10px;">Clear Cache (localStorage)</button>
+<button id="btnSaveCache" style="margin-top:10px;">Save Cache (localStorage)</button>
+<button id="btnPanic" style="margin-top:10px;">Panic (Go to Google)</button>
+<button id="btnClosePanel" style="margin-top:10px; background: red;">Close Panel</button>
+
+
+  <div style="margin-top:10px;">
+    <h4>Console Message Filters</h4>
+    <label><input type="checkbox" id="chkDebug" checked> Show Debug Logs</label><br>
+    <label><input type="checkbox" id="chkWarnings" checked> Show Warnings</label><br>
+    <label><input type="checkbox" id="chkErrors" checked> Show Errors</label>
+  </div>
+
+
+<script>document.getElementById('btnSaveCache').onclick = () => {
+  const cacheData = {
+    timestamp: new Date().toISOString(),
+    devMode: isDevMode,
+    filters: {
+      debug: showDebug,
+      warnings: showWarnings,
+      errors: showErrors
+    }
+  };
+
+  localStorage.setItem('devCache', JSON.stringify(cacheData));
+  alert('Cache saved to localStorage.');
+};
+</script>
+
+
+<script>
+  let keyBuffer = '';
+  const activateCode = 'DEVMODE';
+  const deactivateCode = 'DEVOFF';
+  let isDevMode = false;
+  let animationFrameId = null;
+
+  const adminPanel = document.getElementById('adminPanel');
+  const fpsDisplay = document.getElementById('fpsDisplay');
+  const fpmDisplay = document.getElementById('fpmDisplay');
+  const osInfo = document.getElementById('osInfo');
+
+  // Detect OS info and display it
+  function detectOS() {
+    const platform = navigator.platform.toLowerCase();
+    const userAgent = navigator.userAgent.toLowerCase();
+
+    let osName = 'Unknown OS';
+
+    if (platform.indexOf('win') !== -1) osName = 'Windows';
+    else if (platform.indexOf('mac') !== -1) osName = 'MacOS';
+    else if (platform.indexOf('linux') !== -1) osName = 'Linux';
+    else if (/android/.test(userAgent)) osName = 'Android';
+    else if (/iphone|ipad|ipod/.test(userAgent)) osName = 'iOS';
+
+    osInfo.textContent = `OS: ${osName}`;
+  }
+
+  // Original console functions
+  const originalLog = console.log;
+  const originalWarn = console.warn;
+  const originalError = console.error;
+
+  // Track whether to show logs/warnings/errors
+  let showDebug = true;
+  let showWarnings = true;
+  let showErrors = true;
+
+  // Override console functions based on checkbox states
+  function updateConsoleOverrides() {
+    console.log = showDebug ? originalLog : () => {};
+    console.warn = showWarnings ? originalWarn : () => {};
+    console.error = showErrors ? originalError : () => {};
+  }
+
+  
+  // Checkbox event listeners
+  document.addEventListener('DOMContentLoaded', () => {
+    detectOS();
+
+    document.getElementById('chkDebug').addEventListener('change', (e) => {
+      showDebug = e.target.checked;
+      updateConsoleOverrides();
+    });
+
+    document.getElementById('chkWarnings').addEventListener('change', (e) => {
+      showWarnings = e.target.checked;
+      updateConsoleOverrides();
+    });
+
+    document.getElementById('chkErrors').addEventListener('change', (e) => {
+      showErrors = e.target.checked;
+      updateConsoleOverrides();
+    });
+  });
+
+  // Initialize console overrides
+  updateConsoleOverrides();
+
+  document.addEventListener('keydown', (e) => {
+    keyBuffer += e.key.toUpperCase();
+    keyBuffer = keyBuffer.slice(-10);
+
+    if (!isDevMode && keyBuffer.endsWith(activateCode)) {
+      enableDevMode();
+    } else if (isDevMode && keyBuffer.endsWith(deactivateCode)) {
+      disableDevMode();
+    }
+  });
+
+  function enableDevMode() {
+    isDevMode = true;
+    adminPanel.style.display = 'block';
+    startFPSCounter();
+    console.log('Dev Mode Enabled');
+  }
+
+  function disableDevMode() {
+    isDevMode = false;
+    adminPanel.style.display = 'none';
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+    console.log('Dev Mode Disabled');
+  }
+
+  function startFPSCounter() {
+    let fps = 0;
+    let lastTime = performance.now();
+    let frameCount = 0;
+
+    function update() {
+      if (!isDevMode) return;
+
+      const now = performance.now();
+      frameCount++;
+      const delta = now - lastTime;
+
+      if (delta >= 1000) {
+        fps = frameCount;
+        fpsDisplay.textContent = `FPS: ${fps}`;
+        fpmDisplay.textContent = `FPM: ${fps * 60}`;
+
+        frameCount = 0;
+        lastTime = now;
+      }
+
+      animationFrameId = requestAnimationFrame(update);
+    }
+
+    animationFrameId = requestAnimationFrame(update);
+  }
+
+  // Admin Panel Buttons
+  document.getElementById('btnToggleDark').onclick = () => {
+    document.body.classList.toggle('dark-mode');
+  };
+
+  document.getElementById('btnClearCache').onclick = () => {
+    localStorage.clear();
+    alert('Local Storage cleared.');
+  };
+
+  document.getElementById('btnPanic').onclick = () => {
+    window.location.href = 'https://www.google.com';
+  };
+
+  document.getElementById('btnClosePanel').onclick = () => {
+    disableDevMode();
+  };
+</script>
+
+  
+<lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dev Mode FPS Panel</title>
+  <style>
+    #devPanel {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 14px;
+      border-radius: 5px;
+      z-index: 10000;
+      user-select: none;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="devPanel">
+    <div id="fpsDisplay">FPS: 0</div>
+    <div id="fpmDisplay">FPM: 0</div>
+  </div>
+
+  <script>
+    let isDevMode = false;
+    let animationFrameId;
+
+    const devPanel = document.getElementById('devPanel');
+    const fpsDisplay = document.getElementById('fpsDisplay');
+    const fpmDisplay = document.getElementById('fpmDisplay');
+
+    function startFPSCounter() {
+      let fps = 0;
+      let lastTime = performance.now();
+      let frameCount = 0;
+
+      function update() {
+        if (!isDevMode) return;
+
+        const now = performance.now();
+        frameCount++;
+        const delta = now - lastTime;
+
+        if (delta >= 1000) {
+          fps = frameCount;
+
+          if (fps < 45) {
+            fpsDisplay.style.color = 'red';
+          } else if (fps < 50) {
+            fpsDisplay.style.color = 'yellow';
+          } else {
+            fpsDisplay.style.color = 'limegreen';
+          }
+
+          fpsDisplay.textContent = `FPS: ${fps}`;
+          fpmDisplay.textContent = `FPM: ${fps * 60}`;
+
+          frameCount = 0;
+          lastTime = now;
+        }
+
+        animationFrameId = requestAnimationFrame(update);
+      }
+
+      animationFrameId = requestAnimationFrame(update);
+    }
+
+    function toggleDevMode() {
+      isDevMode = !isDevMode;
+      devPanel.style.display = isDevMode ? 'block' : 'none';
+
+      if (isDevMode) {
+        startFPSCounter();
+      } else {
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
+      }
+    }
+
+    // Toggle dev mode by pressing the "D" key
+    window.addEventListener('keydown', (e) => {
+      if (e.key.toLowerCase() === 'd') {
+        toggleDevMode();
+      }
+    });
+  </script>
+</body>
+</html>
+
 
   <script>
     let keyBuffer = '';
@@ -701,22 +994,9 @@
       animationFrameId = requestAnimationFrame(update);
     }
 
-    function triggerJumpScare() {
-      const scream = document.getElementById('scream');
-      const scare = document.getElementById('jumpscare');
 
-      scare.style.display = 'allow';
-      scare.style.backgroundImage = "url('https://media.tenor.com/VYOoLqkBFsMAAAAd/jumpscare-gif.gif')";
+    
 
-      scream.volume = 1.0;
-      scream.play().catch(() => {
-        alert("...&&#&$#&$*&#!*&478*.");
-      });
-
-      setTimeout(() => {
-        window.location.href = '';
-      }, 4000); // Wait 4 seconds before redirect
-    }
   </script>
 </body>
 </html>
