@@ -292,27 +292,27 @@
         case 'Default':
           document.body.style.background = 'var(--bg-color)';
           particles = [];
-          setBannerColor('#7289da'); // default discord blue
+          setBannerColor('#7289da'); // default discord Banner shit
           break;
         case 'Chills':
           document.body.style.background = '#aee1f9';
           createParticles('snow');
-          setBannerColor('#000033'); // dark dark blue
+          setBannerColor('#000033'); // dark aqua blue ish
           break;
         case 'HotMagma':
           document.body.style.background = '#ff5722';
           createParticles('fire');
-          setBannerColor('#ff4500'); // hot orange
+          setBannerColor('#ff4500'); // hot Lava
           break;
         case 'BioWaves':
           document.body.style.background = '#4caf50';
           createParticles('bubbles');
-          setBannerColor('#f7f48b'); // yellow tint
+          setBannerColor('#f7f48b'); // yellow
           break;
         case 'Vortext':
           document.body.style.background = '#7e57c2';
           createParticles('cubes');
-          setBannerColor('#6a0dad'); // purple granite
+          setBannerColor('#6a0dad'); // purple 
           break;
         default:
           alert('Invalid style');
@@ -395,7 +395,7 @@
       const newName = prompt("What do you want to rename this tab to?");
       if (newName) document.title = newName;
 
-      const iconChoice = 'google'; // Only Google icon for now
+      const iconChoice = 'google'; // Google Favicon 
       if (iconChoice === 'google') {
         const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
         link.type = 'image/x-icon';
@@ -410,14 +410,14 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-  resizeCanvas(); // Ensure canvas size is correct
+  resizeCanvas(); // Ensure canvas size is correct and not broken 
 
-  // Load cached dark/light mode
+  // Load cached dark/light mode (Or default if first time)
   const savedMode = localStorage.getItem('themeMode');
   if (savedMode === 'light') {
     document.body.classList.remove('dark-mode');
   } else {
-    document.body.classList.add('dark-mode'); // Default to dark
+    document.body.classList.add('dark-mode'); // Default: Light Or Dark (Dark)
   }
 
   // Load cached selected style
@@ -426,7 +426,7 @@
     styleSelector.value = savedStyle;
     applyStyle(savedStyle);
   } else {
-    applyStyle('Default'); // fallback style
+    applyStyle('Default'); // default style/ first enter
   }
 });
 
@@ -439,7 +439,7 @@ extrasBtn.addEventListener('click', () => {
   if (extrasButtons.style.display === 'flex') {
     extrasButtons.style.display = 'none';
     gameContainer.innerHTML = '';
-mainButtons.style.display = 'none'; //Weird Right now
+mainButtons.style.display = 'none'; //Weird Right now might fix later
   } else {
     extrasButtons.style.display = 'flex';
     gameContainer.innerHTML = '';
@@ -457,7 +457,7 @@ mainButtons.style.display = 'none'; //Weird Right now
     animate();
 
 
-    // Tic Tac Toe game setup
+    // Tic Tac Toe game setup/start
     const ticTacToeBtn = document.getElementById('ticTacToeBtn');
 
     ticTacToeBtn.addEventListener('click', () => {
@@ -473,7 +473,7 @@ mainButtons.style.display = 'none'; //Weird Right now
       `;
       startTicTacToe();
 
-      // Reset button listener
+      // Reset button listener/ ender ongame 
       document.getElementById('resetTicTacToeBtn').addEventListener('click', resetTicTacToe);
     });
     let currentTurn, boardCells, boardState;
@@ -610,10 +610,6 @@ mainButtons.style.display = 'none'; //Weird Right now
     <div id="fpmText">FPM: <span id="fpm">0</span></div>
   </div>
 
-  <div id="jumpscare"></div>
-
-  <audio id="scream" src="https://www.soundjay.com/human/sounds/scream-01.mp3" preload="auto"></audio>
-
 #Unblockee
   <div id="adminPanel" style=" 
   display:none;
@@ -680,7 +676,7 @@ mainButtons.style.display = 'none'; //Weird Right now
   const fpmDisplay = document.getElementById('fpmDisplay');
   const osInfo = document.getElementById('osInfo');
 
-  // Detect OS info and display it
+  // Detect OS info and display it *admin panle 
   function detectOS() {
     const platform = navigator.platform.toLowerCase();
     const userAgent = navigator.userAgent.toLowerCase();
@@ -701,12 +697,12 @@ mainButtons.style.display = 'none'; //Weird Right now
   const originalWarn = console.warn;
   const originalError = console.error;
 
-  // Track whether to show logs/warnings/errors
+  // Track whether to show logs/warnings/errors *IN DEBUG CONSOLE
   let showDebug = true;
   let showWarnings = true;
   let showErrors = true;
 
-  // Override console functions based on checkbox states
+  // Override console functions based on checkbox status
   function updateConsoleOverrides() {
     console.log = showDebug ? originalLog : () => {};
     console.warn = showWarnings ? originalWarn : () => {};
@@ -898,7 +894,7 @@ mainButtons.style.display = 'none'; //Weird Right now
       }
     }
 
-    // Toggle dev mode by pressing the "D" key
+    // Toggle developer mode by pressing the "D" key
     window.addEventListener('keydown', (e) => {
       if (e.key.toLowerCase() === 'd') {
         toggleDevMode();
@@ -908,7 +904,8 @@ mainButtons.style.display = 'none'; //Weird Right now
 </body>
 </html>
 
-
+ <!--This shit is too broken I'm too fucking lazy to fix-->
+ 
   <script>
     let keyBuffer = '';
     const activateCode = 'DEVMODE';
